@@ -25,8 +25,8 @@ mkdir ${output_dir}
 
 packagepath=$basepath/src
 configfile_src=${basepath}/conf/config-${tag}.lua
-configpath_dest=${packagepath}/cofnig.lua
+configpath_dest=${packagepath}/config.lua
 cp $configfile_src  $configpath_dest
 cd ${packagepath} 
 tar -zcvf ${basepath}/output/graypub.tar.gz *
-rm -rf ${configpath_dest}
+#rm -rf ${configpath_dest}
