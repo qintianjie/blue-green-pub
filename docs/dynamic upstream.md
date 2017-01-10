@@ -1,14 +1,18 @@
 # install  
 ``` 
-https://github.com/CNSRE/lua-upstream-nginx-module.git  
+git clone https://github.com/CNSRE/lua-upstream-nginx-module.git  
 wget https://openresty.org/download/openresty-1.11.2.2.tar.gz  
+
+git clone https://github.com/cubicdaiya/ngx_dynamic_upstream.git // 另外一种 dynamic upstream, 类似 nginx plus
+
 
 tar -zxvf openresty-1.11.2.2.tar.gz   
 cd openresty-1.11.2.2   
 rm -rf build/ngx_lua_upstream-0.06/*     (except "config",  保留 config 文件)    
 cp lua-upstream-nginx-module/* openresty-1.11.2.2/build/ngx_lua_upstream-0.06/   (except "config", 不拷贝 config 文件)   
 
-./configure -j2   
+// ./configure -j2   
+./configure --add-module=/opt/dev/nginx-module/ngx_dynamic_upstream -j2
 make -j2   
 make install  
 ```
