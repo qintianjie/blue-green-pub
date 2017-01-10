@@ -28,7 +28,16 @@ built with OpenSSL 1.0.1e-fips 11 Feb 2013
 TLS SNI support enabled
 configure arguments: --prefix=/usr/local/openresty/nginx --with-cc-opt=-O2 --add-module=../ngx_devel_kit-0.3.0 --add-module=../echo-nginx-module-0.60 --add-module=../xss-nginx-module-0.05 --add-module=../ngx_coolkit-0.2rc3 --add-module=../set-misc-nginx-module-0.31 --add-module=../form-input-nginx-module-0.12 --add-module=../encrypted-session-nginx-module-0.06 --add-module=../srcache-nginx-module-0.31 --add-module=../ngx_lua-0.10.7 --add-module=../ngx_lua_upstream-0.06 --add-module=../headers-more-nginx-module-0.32 --add-module=../array-var-nginx-module-0.05 --add-module=../memc-nginx-module-0.17 --add-module=../redis2-nginx-module-0.13 --add-module=../redis-nginx-module-0.3.7 --add-module=../rds-json-nginx-module-0.14 --add-module=../rds-csv-nginx-module-0.07 --with-ld-opt=-Wl,-rpath,/usr/local/openresty/luajit/lib --add-module=/opt/dev/nginx-module/ngx_dynamic_upstream --with-http_ssl_module
 ```
+# Test env  
+```
+git clone https://github.com/qintianjie/gray-pub.git 
+cd docs/server_nginx_dynamic_upstrem   
+nginx -p `pwd`
+```
 
 # CMDs
-演示操作如下：
+Lua 操作如下：
 ![image](https://github.com/qintianjie/gray-pub/blob/master/docs/pics/nginx_dynamic_upstrem.png)
+
+HTTP操作演示如下：
+![image](https://github.com/qintianjie/gray-pub/blob/master/docs/pics/nginx_dynamic_upstrem2.png)
