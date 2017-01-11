@@ -26,10 +26,13 @@ mkdir ${output_dir}
 packagepath=$basepath/src
 configfile_base=${basepath}/conf/configbase.lua
 configfile_src=${basepath}/conf/config-${tag}.lua
-configpath_dest=${packagepath}/config.lua
+configpath_dest=${packagepath}/lua/conf/config.lua
 
-cp $configfile_base  ${packagepath}/configbase.lua
+cp $configfile_base  ${packagepath}/lua/conf/configbase.lua
 cp $configfile_src  $configpath_dest
+
 cd ${packagepath} 
 tar -zcvf ${basepath}/output/bg-pub.tar.gz *
-#rm -rf ${configpath_dest}
+
+rm -rf ${configpath_dest}
+rm -rf ${packagepath}/lua/conf/configbase.lua
