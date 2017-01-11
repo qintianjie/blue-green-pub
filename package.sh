@@ -8,7 +8,7 @@ if [ $# -gt 0 ]; then
     if [ "x$tag" != "xdev" -a "x$tag" != "xprod" -a "x$tag" != "xqa" ]; then
         echo "tag should in  ["dev", "prod", "qa"]"
         exit 1
-    fi
+    fi  
 else
     echo "No input tag, use default: dev"
     tag="dev"
@@ -24,9 +24,12 @@ rm -rf ${output_dir}
 mkdir ${output_dir}
 
 packagepath=$basepath/src
+configfile_base=${basepath}/conf/configbase.lua
 configfile_src=${basepath}/conf/config-${tag}.lua
 configpath_dest=${packagepath}/config.lua
+
+cp $configfile_base  ${packagepath}/configbase.lua
 cp $configfile_src  $configpath_dest
 cd ${packagepath} 
-tar -zcvf ${basepath}/output/graypub.tar.gz *
+tar -zcvf ${basepath}/output/bg-pub.tar.gz *
 #rm -rf ${configpath_dest}

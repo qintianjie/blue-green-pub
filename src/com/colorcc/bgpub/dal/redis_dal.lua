@@ -18,8 +18,6 @@ function _M.conn(self)
     		print("error eonnect to redis")
     	else
     		print("good to redis")
-        -- ngx.log(ngx.ERR, "failed to connect to redis: ", err)
-        -- return ngx.exit(500)
     	end
 
 	print ("use redis")
