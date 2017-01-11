@@ -40,6 +40,7 @@ _M.connectdb = function(self)
 
     red:set_timeout(timeout)
 
+
     local server_arr = string_utils.split(server, ",")
     for i = 1, #server_arr do  
     	local server_item = server_arr[i]
@@ -51,21 +52,20 @@ _M.connectdb = function(self)
                 local r_auth = item[3]
                 if r_host and r_port then
                     ok, err = red:connect(r_host, r_port)
-                    -- if ok then return red:select(dbid) end
                     if ok then
                         local auth_ok, auth_err
                         if r_auth and r_auth ~= '' then
                             auth_ok, auth_err = red:auth(r_auth)
                             if auth_ok then
+                                -- make cur redis config first
                                 return red:select(dbid)
                             else
                                 return auth_ok, auth_err
                             end
                         else
+                          -- make cur redis config first
                           return red:select(dbid)
                         end
-                    else
-                    	return ok, err
                     end
                 end
             end
@@ -73,20 +73,6 @@ _M.connectdb = function(self)
     end
     return nil, "connect redis error."
 end
-
-
--- function _M.conn(self)
--- 	local red = redis:new()
--- 	red:set_timeout(1000) 
--- 	local ok, err = red:connect("127.0.0.1", 6379)
--- 	if not ok then
--- 		print("error eonnect to redis")
--- 		return "-1"
--- 	else
--- 		print("good to redis")
--- 		return "1"
--- 	end
--- end 
 
 _M.keepalivedb = function(self)
     local   pool_max_idle_time  = self.idletime --毫秒

@@ -15,9 +15,18 @@ local redis_init_service = config_base.redisInitService
 local redis_dal = require("dal.redis_dal")
 local error_info     = require('utils.error_code').info
 
+local setKeepalive = function(red) 
+    local ok, err = red:keepalivedb()  
+    if not ok then
+        local info = errorInfo.REDIS_KEEPALIVE_ERROR
+        ngx.log(ngx.ERR, '[BIZ_set_data] code: "'.. info[1] ..'"', err)
+        return
+    end
+end
+
 _M.redisconn = function (self)
 	local redis_conf 		 = config_base.redisConf
-	ngx.log(ngx.ERR, cjson.encode(redis_conf))
+	-- ngx.log(ngx.ERR, cjson.encode(redis_conf))
 	local red = redis_dal:new(redis_conf)
 	local ok, err = red:connectdb()
 
@@ -33,10 +42,15 @@ _M.redisconn = function (self)
 	    -- local service_name_set, err = redis:smembers(sn_set_key)
 	    -- local info = error_info.SUCCESS 
 
-	    if red then setKeepalive(red) end
+	    -- if red then setKeepalive(red) end
 	    -- return error_info[1], service_name_set
+
+	    -- if red then
+	    -- 	red:keepalivedb() 
+	    -- end
 	    return red, ""
 	end
 end 
+
 
 return _M

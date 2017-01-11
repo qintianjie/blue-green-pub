@@ -23,6 +23,7 @@ local rule_data_cache = ngx.shared["dict_rule_data"]
 _M.ruleset = function ( self, conf )
 	local service_keys = conf.s_key
 	local red, err = redis_api.redisconn()
+	-- ngx.log(ngx.ERR, "ngx: " .. cjson.encode(red))
 	if not red then
 		local info = error_code.REDIS_CONNECT_ERROR 
 	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
@@ -56,11 +57,11 @@ _M.ruleset = function ( self, conf )
 	          data[opdata_key] = opdata
 	        end
 	    end
-	    if red then setKeepalive(red) end
+	    -- if red then setKeepalive(red) end
 	    return info[1], data
 	end
 
-	return nil
+	return -1, ""
 end
 
 
