@@ -23,4 +23,19 @@ _M.redisInitService = {
     ["initServiceName"]  = "bgpub:service:names"
 }
 
+_M.prefixConf = {
+    ["policyPrefix"]     = 'biztech:gray'
+    -- ["policyPrefix"]     = 'bizgray'
+} 
+
+_M.fields = {
+    -- ['switch']           = 'switch',
+    -- ['optype']           = 'optype',
+    -- ['opdata']           = 'opdata'
+    ['switch']           = 'graySwitch',
+    ['optype']           = 'grayType',
+    ['opdata']           = 'grayData'
+}
+
+
 return _M

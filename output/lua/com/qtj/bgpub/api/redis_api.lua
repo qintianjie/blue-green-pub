@@ -25,15 +25,17 @@ _M.redisconn = function (self)
 		local info = error_info.REDIS_CONNECT_ERROR 
 	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
 	    ngx.log(ngx.ERR, '[API] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
-	    return info[1], desc
+	    -- return info[1], desc
+	    return nil, info[1]
 	else 
-		local redis = red.redis
-	    local sn_set_key = redis_init_service["initServiceName"]
-	    local service_name_set, err = redis:smembers(sn_set_key)
-	    local info = error_info.SUCCESS 
+		-- local redis = red.redis
+	    -- local sn_set_key = redis_init_service["initServiceName"]
+	    -- local service_name_set, err = redis:smembers(sn_set_key)
+	    -- local info = error_info.SUCCESS 
 
 	    if red then setKeepalive(red) end
-	    return error_info[1], service_name_set
+	    -- return error_info[1], service_name_set
+	    return red, ""
 	end
 end 
 
