@@ -1,0 +1,1 @@
+127.0.0.1 - - [11/Jan/2017:19:14:04 +0800] "GET /bgpub/ruleset?service=abc HTTP/1.1" 200 21 "-" "curl/7.29.0"
