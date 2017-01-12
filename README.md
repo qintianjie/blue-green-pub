@@ -1,4 +1,25 @@
 
+# run sample:
+```
+1. install redis. eg:  192.168.142.128:6379, auth=123456
+2. set data:
+    HMSET biztech:gray:apollo graySwitch true grayType in grayData 111,222,333
+    HGETALL biztech:gray:apollo
+    
+    SADD biztech:gray:service:names apollo atlas
+    SMEMBERS biztech:gray:service:names
+    
+3. git clone https://github.com/qintianjie/blue-green-pub.git
+   cd blue-green-pub/output
+   
+4. pkill -9 nginx; rm -rf *temp; rm -rf logs/*; nginx -p `pwd`
+   curl "http://localhost:8899/bgpub/ruleset?service=ss,apollo,aka"
+   curl "http://localhost:8899/bgpub/ruleget"
+   tail -f logs/*log
+   
+Tips:  change redis config from lua/conf/configbase.lua
+```
+
 
 # blue-green-pub
 
