@@ -77,5 +77,42 @@ _M.ruleset = function (conf)
 	return nil, ""
 end
 
+-- delete ruledata from ngx.shared.dict
+-- NOTE: make sure delete data from redis by manual
+_M.ruledelete = function (conf)
+	local service_keys = conf.s_key
+	local service_key_arr = string_utils.split(service_keys, ",")
+	for i in pairs(service_key_arr) do
+        local s_key = service_key_arr[i]
+        if s_key ~= nil and string.len(s_key) > 0 then
+          	local real_key = string_utils.trim(s_key)
+          	-- 构造 redis key:   policyPrefix:servicename 格式
+          	local service_key = table.concat({config_base.prefixConf["policyPrefix"],real_key},":")
+
+			rule_data_cache:set(service_key .. ":" .. switch_key, nil)
+			rule_data_cache:set(service_key .. ":" .. optype_key, nil)
+			rule_data_cache:set(service_key .. ":" .. opdata_key, nil)
+		end
+	end
+	return "ok", "succeed deleted"
+end
+
+-- update switch ruledata from ngx.shared.dict
+-- NOTE: make sure delete data from redis by manual
+_M.switchupdate = function (conf)
+	local switch_value = conf.switch_value
+	local service_keys = conf.s_key
+	local service_key_arr = string_utils.split(service_keys, ",")
+	for i in pairs(service_key_arr) do
+        local s_key = service_key_arr[i]
+        if s_key ~= nil and string.len(s_key) > 0 then
+          	local real_key = string_utils.trim(s_key)
+          	-- 构造 redis key:   policyPrefix:servicename 格式
+          	local service_key = table.concat({config_base.prefixConf["policyPrefix"],real_key},":")
+			rule_data_cache:set(service_key .. ":" .. switch_key, switch_value)
+		end
+	end
+	return "0", "succeed update switch value"
+end
 
 return _M

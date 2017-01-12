@@ -31,5 +31,12 @@ _M.fields = {
     ['opdata']           = 'grayData'
 }
 
+_M.switch_enum = {
+    ['test']          = 'TEST',  -- for test
+    ['online_auto']   = 'ONLINE_AUTO', -- for online, auto load balance between blue and green upstream
+    ['online_manual'] = 'ONLINE_MANUAL',
+    ['clone']         = 'CLOSE'
+}
+
 
 return _M
