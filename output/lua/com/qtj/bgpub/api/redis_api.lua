@@ -24,10 +24,12 @@ local setKeepalive = function(red)
     end
 end
 
+-- 连接线上 redis
 _M.redisconn = function (self)
 	local redis_conf 		 = config_base.redisConf
-	-- ngx.log(ngx.ERR, cjson.encode(redis_conf))
+	-- 配置信息
 	local red = redis_dal:new(redis_conf)
+	-- 连接
 	local ok, err = red:connectdb()
 
 	if not ok then
@@ -48,7 +50,7 @@ _M.redisconn = function (self)
 	    -- if red then
 	    -- 	red:keepalivedb() 
 	    -- end
-	    return red, ""
+	    return red, "succeed"
 	end
 end 
 

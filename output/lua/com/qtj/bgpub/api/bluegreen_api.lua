@@ -1,4 +1,4 @@
--- A test sample.
+-- 蓝绿发布 API 接口层.
 --
 -- Author: qintianjie
 -- Date:   2017-01-05
@@ -10,6 +10,7 @@ _M._VERSION = '1.0.0'
 local redis_api 	 = require("api.redis_api")
 local error_code     = require('utils.error_code').info
 
+-- 配置信息
 local config_base 	 = require("configbase")
 local switch_key    = config_base.fields["switch"]
 local optype_key    = config_base.fields["optype"]
@@ -17,9 +18,13 @@ local opdata_key    = config_base.fields["opdata"]
 
 local string_utils = require "utils.string_utils"
 
+-- 规则缓存在 nginx dict 名
 local rule_data_cache = ngx.shared["dict_rule_data"]
 
 
+-- 根据传入的 service_name ，从 redis 取相关规则数据，设置到 shared dict 中
+-- conf = {["s_key":xxx]} : s_key ==> 传入的服务名，可以逗号分隔为多个
+-- 
 _M.ruleset = function ( self, conf )
 	local service_keys = conf.s_key
 	local red, err = redis_api.redisconn()
@@ -39,30 +44,37 @@ _M.ruleset = function ( self, conf )
 	        local s_key = service_key_arr[i]
 	        if s_key ~= nil and string.len(s_key) > 0 then
 	          local real_key = string_utils.trim(s_key)
+	          -- 构造 redis key:   policyPrefix:servicename 格式
 	          local service_key = table.concat({config_base.prefixConf["policyPrefix"],real_key},":")
 
+	          -- 每个 key 都是一个 map， 对应规则数据有:  switch 路由, optype 操作类型, opdata: 操作数据
 	          local switch = redis:hget(service_key, switch_key)
 	          local optype = redis:hget(service_key, optype_key)
 	          local opdata = redis:hget(service_key, opdata_key)
-	          
-	          rule_data_cache:set(service_key .. ":" .. switch_key, switch)
-	          rule_data_cache:set(service_key .. ":" .. optype_key, optype)
-	          rule_data_cache:set(service_key .. ":" .. opdata_key, opdata)
+
+	          data[s_key .. "." .. switch_key] = switch
+	          data[s_key .. "." .. optype_key] = optype
+	          data[s_key .. "." .. opdata_key] = opdata
+
+	          -- 验证数据有效性， 这里不直接 return 是考虑更新多个服务的时，前面服务的数据不全，不影响后面服务继续
 	      	  if switch== ngx.null or switch == "" or optype == ngx.null or optype == "" or opdata == ngx.null or opdata == "" then
 	            ngx.log(ngx.ERR, "policy or policy item is null when set [" .. service_key .. "].")	  
 	      	    info = error_code.POLICY_INVALID_ERROR
+	      	    data[s_key .. ".result"] = "data_error"
+	      	  else
+	      	  	-- 将 redis 得到的数据，存入 ngx.shared.dict 中
+	          	rule_data_cache:set(service_key .. ":" .. switch_key, switch)
+	          	rule_data_cache:set(service_key .. ":" .. optype_key, optype)
+	          	rule_data_cache:set(service_key .. ":" .. opdata_key, opdata)
+	          	data[s_key .. ".result"] = "succeed"
 	      	  end
-	       
-	          data[switch_key] = switch
-	          data[optype_key] = optype
-	          data[opdata_key] = opdata
 	        end
 	    end
-	    -- if red then setKeepalive(red) end
+	    if red then redis_api.setKeepalive(red) end
 	    return info[1], data
 	end
 
-	return -1, ""
+	return nil, ""
 end
 
 
