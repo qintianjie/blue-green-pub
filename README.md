@@ -21,6 +21,7 @@
    
 Tips:  change redis config from lua/conf/configbase.lua
 ```
+![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/blue_green_action.png)
 
 
 # blue-green-pub
