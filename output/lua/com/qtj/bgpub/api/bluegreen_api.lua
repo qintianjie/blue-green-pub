@@ -29,12 +29,10 @@ _M.ruleset = function ( self, conf )
 	local service_keys = conf.s_key
 	local red, err = redis_api.redisconn()
 	if not red then
-		ngx.log(ngx.ERR, string.format("[API]"))
-		return nil, err
-		-- local info = error_code.REDIS_CONNECT_ERROR 
-	 --    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
-	 --    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
-  --   	return info[1], desc
+		local info = error_code.REDIS_CONNECT_ERROR 
+	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
+	    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
+    	return info[1], desc
 	else
 		local redis = red.redis 
 	    local service_key_arr = string_utils.split(service_keys, ",")
@@ -56,10 +54,12 @@ _M.ruleset = function ( self, conf )
 	          data[s_key .. "." .. optype_key] = optype
 	          data[s_key .. "." .. opdata_key] = opdata
 
-	          -- 验证数据有效性， 这里不直接 return 是考虑更新多个服务的时，前面服务的数据不全，不影响后面服务继续
+	          -- 验证数据有效性， 这里不直接 return 是考虑更新多个服务的时，前面服务的数据不全，不影响后面服务继续面服务的数据不全，不影响后面服务继续
 	      	  if switch== ngx.null or switch == "" or optype == ngx.null or optype == "" or opdata == ngx.null or opdata == "" then
-	            ngx.log(ngx.ERR, "policy or policy item is null when set [" .. service_key .. "].")	  
-	      	    info = error_code.POLICY_INVALID_ERROR
+	      	  	info = error_code.POLICY_INVALID_ERROR
+	      	  	ngx.log(ngx.ERR, string.format("[API] [%d] %s[%s]", info[1], info[2], service_key))	
+	            -- ngx.log(ngx.ERR, "policy or policy item is null when set [" .. service_key .. "].")	  
+	      	    
 	      	    data[s_key .. ".result"] = "data_error"
 	      	  else
 	      	  	-- 将 redis 得到的数据，存入 ngx.shared.dict 中
@@ -70,6 +70,7 @@ _M.ruleset = function ( self, conf )
 	      	  end
 	        end
 	    end
+	    -- will close current redis connect
 	    if red then redis_api.setKeepalive(red) end
 	    return info[1], data
 	end

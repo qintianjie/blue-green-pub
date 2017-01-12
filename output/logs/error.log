@@ -1,0 +1,2 @@
+2017/01/12 14:43:53 [error] 97758#0: *1 [lua] bluegreen_api.lua:60: ruleset(): [API] [50201] policies invalid for: [biztech:gray:ss]., client: 127.0.0.1, server: localhost, request: "GET /bgpub/ruleset?service=ss,apollo,aka HTTP/1.1", host: "localhost:8899"
+2017/01/12 14:43:53 [error] 97758#0: *1 [lua] bluegreen_api.lua:60: ruleset(): [API] [50201] policies invalid for: [biztech:gray:aka]., client: 127.0.0.1, server: localhost, request: "GET /bgpub/ruleset?service=ss,apollo,aka HTTP/1.1", host: "localhost:8899"

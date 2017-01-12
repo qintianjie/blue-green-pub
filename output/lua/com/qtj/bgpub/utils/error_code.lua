@@ -23,8 +23,8 @@ _M.info = {
     ['PARAMETER_NEEDED']	    = { 50103, 'need parameter for '},
     ['PARAMETER_TYPE_ERROR']	= { 50104, 'parameter type error for '},
     
-    --	input policy error
-    ['POLICY_INVALID_ERROR']	= { 50201, 'policies invalid for ' },
+    --*	input policy error
+    ['POLICY_INVALID_ERROR']	= { 50201, 'policies invalid for: ' },
     
     ['POLICY_BUSY_ERROR']	    = { 50202, 'policy is busy and policyID is ' },
     

@@ -48,9 +48,9 @@ _M.connectdb = function(self)
 
     local timeout   = self.timeout 
     if not timeout then 
-        timeout = 1000   -- 10s
+        timeout = 1000   -- 1s
     end
-
+    
     red:set_timeout(timeout) --ms
 
 
@@ -71,16 +71,17 @@ _M.connectdb = function(self)
                             auth_ok, auth_err = red:auth(r_auth)
                             if auth_ok then
                                 -- @TODO 保存成功信息
-                                red:select(dbid)
-                                return red, "SUCCEED with auth"
+                                -- red:select(dbid)
+                                -- return red, "SUCCEED with auth"
+                                return red:select(dbid)
                             else
-                                -- return auth_ok, auth_err
-                                return nil, "auth failed."
+                                return auth_ok, auth_err
+                                -- return nil, "auth failed."
                             end
                         else
                           -- @TODO 保存成功信息
-                          -- return red:select(dbid)
-                          return red, "SUCCEED without auth"
+                          return red:select(dbid)
+                          -- return red, "SUCCEED without auth"
                         end
                     end
                 end
@@ -99,17 +100,6 @@ _M.keepalivedb = function(self)
     if not pool_max_idle_time then pool_max_idle_time = 90000 end
     
     return self.redis:set_keepalive(pool_max_idle_time, pool_size)  
-end
-
--- 设置 keepalive
-_M.keepalivedb2 = function(self, red)
-    local   pool_max_idle_time  = self.idletime --毫秒
-    local   pool_size           = self.poolsize --连接池大小
-
-    if not pool_size then pool_size = 1000 end
-    if not pool_max_idle_time then pool_max_idle_time = 90000 end
-    
-    return red:set_keepalive(pool_max_idle_time, pool_size)  
 end
 
 return _M

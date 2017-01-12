@@ -15,15 +15,6 @@ local redis_init_service = config_base.redisInitService
 local redis_dal = require("dal.redis_dal")
 local error_info     = require('utils.error_code').info
 
-local setKeepalive = function(red) 
-    local ok, err = red:keepalivedb()  
-    if not ok then
-        local info = errorInfo.REDIS_KEEPALIVE_ERROR
-        ngx.log(ngx.ERR, '[BIZ_set_data] code: "'.. info[1] ..'"', err)
-        return
-    end
-end
-
 -- 连接线上 redis
 _M.redisconn = function (self)
 	local redis_conf 		 = config_base.redisConf
@@ -36,23 +27,22 @@ _M.redisconn = function (self)
 		local info = error_info.REDIS_CONNECT_ERROR 
 	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
 	    ngx.log(ngx.ERR, '[API] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
-	    -- return info[1], desc
 	    return nil, info[1]
 	else 
-		-- local redis = red.redis
-	    -- local sn_set_key = redis_init_service["initServiceName"]
-	    -- local service_name_set, err = redis:smembers(sn_set_key)
-	    -- local info = error_info.SUCCESS 
-
-	    -- if red then setKeepalive(red) end
-	    -- return error_info[1], service_name_set
-
-	    -- if red then
-	    -- 	red:keepalivedb() 
-	    -- end
 	    return red, "succeed"
 	end
 end 
+
+-- Only call this method in the place you would have called the close method instead. 
+-- Calling this method will immediately turn the current redis object into the closed state. 
+_M.setKeepalive = function(red) 
+    local ok, err = red:keepalivedb()  
+    if not ok then
+        local info = errorInfo.REDIS_KEEPALIVE_ERROR
+        ngx.log(ngx.ERR, '[BIZ_set_data] code: "'.. info[1] ..'"', err)
+        return
+    end
+end
 
 
 return _M

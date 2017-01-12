@@ -9,7 +9,7 @@ _M.redisConf = {
     ["server"]    = "192.168.142.128:6379:123456,192.168.142.128:6378:123456" , -- ip:port:auth 格式
     ["poolsize"] 		= 100, 
     ["idletime"] 		= 50000 , 
-    ["timeout"]  		= 500000,
+    ["timeout"]  		= 60000,
     ["dbid"]     		= 0
 }
 
