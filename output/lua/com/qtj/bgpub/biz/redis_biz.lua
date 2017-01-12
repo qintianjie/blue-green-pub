@@ -26,7 +26,7 @@ _M.redisconn = function (self)
 	if not ok then
 		local info = error_info.REDIS_CONNECT_ERROR 
 	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
-	    ngx.log(ngx.ERR, '[API] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
+	    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
 	    return nil, info[1]
 	else 
 	    return red, "succeed"
@@ -39,7 +39,7 @@ _M.setKeepalive = function(red)
     local ok, err = red:keepalivedb()  
     if not ok then
         local info = errorInfo.REDIS_KEEPALIVE_ERROR
-        ngx.log(ngx.ERR, '[BIZ_set_data] code: "'.. info[1] ..'"', err)
+        ngx.log(ngx.ERR, '[BIZ] code: "'.. info[1] ..'"', err)
         return
     end
 end

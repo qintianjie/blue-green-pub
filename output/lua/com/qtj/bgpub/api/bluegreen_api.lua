@@ -20,6 +20,11 @@ _M.ruleset = function ( self, conf )
 	return ok, err
 end
 
+_M.ruleget = function ( self, conf )
+	local result = bluegreen_biz.ruleget(conf)
+	return result, "succeed get rule data limit 100."
+end
+
 _M.ruledelete = function ( self, conf )
 	-- local service_keys = conf.s_key
 	local ok, err = bluegreen_biz.ruledelete(conf)

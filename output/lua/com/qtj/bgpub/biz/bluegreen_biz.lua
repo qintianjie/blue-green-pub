@@ -77,6 +77,45 @@ _M.ruleset = function (conf)
 	return nil, ""
 end
 
+-- get ruledata from ngx.shared.dict
+_M.ruleget = function (conf)
+	local service_name = conf.s_key
+	local rule_data_cache = ngx.shared["dict_rule_data"]
+	local result = {}
+
+	if service_name and string.len(service_name) > 0 then
+        local key_prefix   = config_base.prefixConf["policyPrefix"]
+
+        local buffer_switch_key = table.concat({key_prefix, service_name, switch_key}, ":")
+        local buffer_optype_key = table.concat({key_prefix, service_name, optype_key}, ":")
+        local buffer_opdata_key = table.concat({key_prefix, service_name, opdata_key}, ":")
+
+        
+        result["service_name"] = service_name
+        result["cache.prifix"] = key_prefix .. ":" .. service_name
+
+        local data = {}
+        data[switch_key] = rule_data_cache:get(buffer_switch_key)
+        data[optype_key] = rule_data_cache:get(buffer_optype_key)
+        data[opdata_key] = rule_data_cache:get(buffer_opdata_key)
+
+        result["data"] = data
+	else
+		result["service_name"] = "ALL"
+        result["cache.prifix"] = "ALL limit 1000"
+
+        local switch_keys = rule_data_cache:get_keys(100)  
+        local data = {} 
+        for k, v in ipairs(switch_keys) do       
+            data[v] = rule_data_cache:get(v)
+        end
+
+        result["data"] = data
+	end
+
+	return result
+end
+
 -- delete ruledata from ngx.shared.dict
 -- NOTE: make sure delete data from redis by manual
 _M.ruledelete = function (conf)
