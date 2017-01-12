@@ -23,12 +23,13 @@ local rule_data_cache = ngx.shared["dict_rule_data"]
 _M.ruleset = function ( self, conf )
 	local service_keys = conf.s_key
 	local red, err = redis_api.redisconn()
-	-- ngx.log(ngx.ERR, "ngx: " .. cjson.encode(red))
 	if not red then
-		local info = error_code.REDIS_CONNECT_ERROR 
-	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
-	    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
-    	return info[1], desc
+		ngx.log(ngx.ERR, string.format("[API]"))
+		return nil, err
+		-- local info = error_code.REDIS_CONNECT_ERROR 
+	 --    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
+	 --    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
+  --   	return info[1], desc
 	else
 		local redis = red.redis 
 	    local service_key_arr = string_utils.split(service_keys, ",")

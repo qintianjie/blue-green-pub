@@ -1,2 +1,0 @@
-127.0.0.1 - - [11/Jan/2017:20:49:53 +0800] "GET /bgpub/ruleset?service=apollo HTTP/1.1" 200 19 "-" "curl/7.29.0"
-127.0.0.1 - - [11/Jan/2017:20:49:55 +0800] "GET /bgpub/get/all HTTP/1.1" 200 134 "-" "curl/7.29.0"

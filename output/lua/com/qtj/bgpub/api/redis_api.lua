@@ -1,4 +1,4 @@
--- A test sample.
+-- Redis.
 --
 -- Author: qintianjie
 -- Date:   2017-01-05

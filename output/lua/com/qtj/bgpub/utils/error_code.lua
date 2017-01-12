@@ -29,7 +29,7 @@ _M.info = {
     ['POLICY_BUSY_ERROR']	    = { 50202, 'policy is busy and policyID is ' },
     
     --	redis connect error
-    ['REDIS_CONNECT_ERROR']	    = { 50301, 'redis connect error for '},
+    ['REDIS_CONNECT_ERROR']	    = { 50301, 'redis connect error'},
     ['REDIS_KEEPALIVE_ERROR']   = { 50302, 'redis keepalive error for '},
     
     --	runtime error
