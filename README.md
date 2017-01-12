@@ -14,7 +14,7 @@
    
 4. pkill -9 nginx; rm -rf *temp; rm -rf logs/*; nginx -p `pwd`
    curl "http://localhost:8899/bgpub/ruleset?service=ss,apollo,aka"
-   curl "http://localhost:8899/bgpub/ruleget"
+   curl "http://localhost:8899/bgpub/ruleget?service=apollo"
    curl "http://localhost:8899/bgpub/switchupdate?service=apollo&switch=TEST"
    curl "http://localhost:8899/bgpub/ruledelete?service=apollo"
    tail -f logs/*log
