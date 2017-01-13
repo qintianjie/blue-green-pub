@@ -1,2 +1,6 @@
-2017/01/12 19:54:57 [error] 20247#0: *2 [lua] bluegreen_biz.lua:58: ruleset(): [API] [50201] policies invalid for: [biztech:gray:ss], client: 127.0.0.1, server: localhost, request: "GET /bgpub/ruleset?service=ss,apollo,aka HTTP/1.1", host: "localhost:8899"
-2017/01/12 19:54:57 [error] 20247#0: *2 [lua] bluegreen_biz.lua:58: ruleset(): [API] [50201] policies invalid for: [biztech:gray:aka], client: 127.0.0.1, server: localhost, request: "GET /bgpub/ruleset?service=ss,apollo,aka HTTP/1.1", host: "localhost:8899"
+2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:70: =====> init work for work 0, context: ngx.timer
+2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend_g1, context: ngx.timer
+2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend_g2, context: ngx.timer
+2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend2_g1, context: ngx.timer
+2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend2_g2, context: ngx.timer
+2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend3_g2, context: ngx.timer

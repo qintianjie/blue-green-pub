@@ -12,6 +12,8 @@ local collection_utils = require("utils.collection_utils")
 local config_base 	   = require("configbase")
 local switch_enum      = config_base.switch_enum
 
+local upstream 		   = require ("ngx.upstream")
+
 -- 根据传入的 service_name ，从 redis 取相关规则数据，设置到 shared dict 中
 -- conf = {["s_key":xxx]} : s_key ==> 传入的服务名，可以逗号分隔为多个
 _M.ruleset = function ( self, conf )
@@ -31,6 +33,7 @@ _M.ruledelete = function ( self, conf )
 	return ok, err
 end
 
+-- update switch for a service
 _M.switchupdate = function ( self, conf )
 	if collection_utils.containKey(switch_enum, conf.switch_value) then
 		local ok, err = bluegreen_biz.switchupdate(conf)
@@ -40,5 +43,81 @@ _M.switchupdate = function ( self, conf )
 	end
 end
 
+-- display all upstream and it's servers
+_M.upstream_get = function ( self, conf )
+    local ups = upstream.get_upstreams()
+
+    local get_servers = upstream.get_servers
+
+    local ups_list = {}
+
+    for _, u in ipairs(ups) do
+        ngx.say("ups: " .. u)
+
+        local srvs, err = get_servers(u)
+
+        if not srvs then
+            ngx.log(ngx.ERR, string.format("no server for upstream %s", u))
+        else 
+        	
+        end
+    end
+end
+
+_M.init_worker = function (self) 
+	if ngx.worker.id() == 0 then
+		local pfunc = function ()
+			ngx.log(ngx.ERR, "=====> init work for work 0")
+			local concat = table.concat
+            local upstream = require "ngx.upstream"
+            local get_servers = upstream.get_servers
+            local get_upstreams = upstream.get_upstreams
+            
+            local us = get_upstreams()
+            for _, u in ipairs(us) do
+            	ngx.log(ngx.ERR, "=====> ups: " .. u)
+                -- ngx.say("upstream ", u, ":")
+                -- local srvs, err = get_servers(u)
+                -- if not srvs then
+                --     ngx.say("failed to get servers in upstream ", u)
+                -- else
+                --     for _, srv in ipairs(srvs) do
+                --         local first = true
+                --         for k, v in pairs(srv) do
+                --             if first then
+                --                 first = false
+                --                 ngx.print("    ")
+                --             else
+                --                 ngx.print(", ")
+                --             end
+                --             if type(v) == "table" then
+                --                 ngx.print(k, " = {", concat(v, ", "), "}")
+                --             else
+                --                 ngx.print(k, " = ", v)
+                --             end
+                --         end
+                --         ngx.print("\\n")
+                --     end
+                -- end
+            end
+
+		--     local code, data =  bizSetDataModule:getGrayServiceNames()
+		--     if code ~= 200 then
+		-- 		ngx.log(ngx.ERR, "[API_init_worker] error: ", data)
+		--     else
+		-- 	    local value = "";
+		-- 	    for k, v in pairs(data) do
+		-- 	    	value = value .. v .. ","
+		-- 	    end
+		-- 	    value=string.sub(value, 1, -2)
+		-- 	    local conf = {["s_key"] = value }
+		-- 	    ngx.log(ngx.INFO, "[API_init_worker] init service : [" .. value .. "]")
+		-- 	  	return bizSetDataModule:setRedisDataToDict(conf)
+		--     end
+		end
+		  
+		ngx.timer.at(0, pfunc) 
+	end
+end
 
 return _M
