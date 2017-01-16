@@ -157,11 +157,16 @@ _M.switchupdate = function (conf)
 	return "0", "succeed update switch value"
 end
 
+
+-- get upstream's server by service_name & group_name
 _M.upstream_get = function (self, conf) 
 	local ups = upstream.get_upstreams()
     local get_servers = upstream.get_servers
-    
+
     local servicename = conf.s_key
+    local groupname = conf.g_key
+
+    ngx.log(ngx.ERR, "=====> groupname: " .. groupname .. ", servicename: " .. servicename)
 
     local ups_list = {}
     for _, u in ipairs(ups) do
@@ -179,6 +184,19 @@ _M.upstream_get = function (self, conf)
 	    			break;
 	    		end
 	    	end
+
+	    	if groupname ~= nil and string.len(groupname) > 0 and u ~= nil and string.len(u) > 0 then
+	    		if last_index == nil or last_index < 1 then
+	    			break;
+	    		end
+
+	    		local ups_sufix = string.sub(u, last_index + 1, -1)
+	    		ngx.log(ngx.ERR, "=====> groupname: " .. ups_sufix)
+	    		if ups_sufix ~= groupname then
+	    			break;
+	    		end
+	    	end
+
 
 	        local srvs, err = get_servers(u)
 

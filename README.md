@@ -17,7 +17,7 @@
    curl "http://localhost:8899/bgpub/ruleget?service=apollo"
    curl "http://localhost:8899/bgpub/switchupdate?service=apollo&switch=TEST"
    curl "http://localhost:8899/bgpub/ruledelete?service=apollo"
-   curl "http://localhost:8899/bgpub/ups/get?service="
+   curl "http://localhost:8899/bgpub/ups/get?service=backend&group=g1"
    tail -f logs/*log
    
 Tips:  change redis config from lua/conf/configbase.lua

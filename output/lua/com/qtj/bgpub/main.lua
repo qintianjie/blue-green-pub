@@ -37,3 +37,5 @@ else
 	print("no sn sub")
 end
 
+print(string.sub(sn, 2, -1))
+
