@@ -51,7 +51,6 @@ _M.upstream_get = function ( self, conf )
     local get_servers = upstream.get_servers
 
     local servicename = conf.s_key
-    ngx.log(ngx.ERR, "service: " .. servicename)
 
     local ups_list = {}
     for _, u in ipairs(ups) do
