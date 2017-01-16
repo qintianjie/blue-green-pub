@@ -51,12 +51,12 @@ _M.upstream_get = function ( self, conf )
     local get_servers = upstream.get_servers
 
     local servicename = conf.s_key
-    local ups_list = {}
     ngx.log(ngx.ERR, "service: " .. servicename)
 
+    local ups_list = {}
     for _, u in ipairs(ups) do
     	repeat 
-
+    		local server_item = {}
 			-- ngx.say("-----------> ups: " .. u )
 			local last_index = string_utils:last_indexof(u, "_")
 	    	if servicename ~= nil and string.len(servicename) > 0 and  u~= nil and string.len(u) > 0 then
@@ -75,27 +75,26 @@ _M.upstream_get = function ( self, conf )
 	        if not srvs then
 	            ngx.log(ngx.ERR, string.format("no server for upstream %s", u))
 	        else 
-	        	 for _, srv in ipairs(srvs) do
-	        	 	ngx.print("ups: " .. u .. " => ")
+	        	for _, srv in ipairs(srvs) do
 		 	        local first = true
+		 	        local key_item = {}
+		 	        local ip_port = ""
 	                for k, v in pairs(srv) do
+	                	key_item[k] = v
+
 	                    if first then
+	                    	ip_port = v
 	                        first = false
-	                        ngx.print("    ")
-	                    else
-	                        ngx.print(", ")
-	                    end
-	                    if type(v) == "table" then
-	                        ngx.print(k, " = {", concat(v, ", "), "}")
-	                    else
-	                        ngx.print(k, " = ", v)
 	                    end
 	                end
-	                ngx.print(";\n")
-	        	 end
+
+	                server_item[ip_port] = key_item
+	        	end
 	        end
+	        ups_list[u] = server_item
     	until true
     end
+    return ups_list
 end
 
 _M.init_worker = function (self) 
