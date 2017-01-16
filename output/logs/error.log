@@ -1,6 +1,13 @@
-2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:70: =====> init work for work 0, context: ngx.timer
-2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend_g1, context: ngx.timer
-2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend_g2, context: ngx.timer
-2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend2_g1, context: ngx.timer
-2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend2_g2, context: ngx.timer
-2017/01/13 19:24:58 [error] 64999#0: *3 [lua] bluegreen_api.lua:78: =====> ups: backend3_g2, context: ngx.timer
+2017/01/16 14:08:58 [error] 60840#0: *3 [lua] bluegreen_api.lua:104: =====> init work for work 0, context: ngx.timer
+2017/01/16 14:08:58 [error] 60840#0: *3 [lua] bluegreen_api.lua:112: =====> ups: backend_g1, context: ngx.timer
+2017/01/16 14:08:58 [error] 60840#0: *3 [lua] bluegreen_api.lua:112: =====> ups: backend_g2, context: ngx.timer
+2017/01/16 14:08:58 [error] 60840#0: *3 [lua] bluegreen_api.lua:112: =====> ups: backend2_g1, context: ngx.timer
+2017/01/16 14:08:58 [error] 60840#0: *3 [lua] bluegreen_api.lua:112: =====> ups: backend2_g2, context: ngx.timer
+2017/01/16 14:08:58 [error] 60840#0: *3 [lua] bluegreen_api.lua:112: =====> ups: backend3_g2, context: ngx.timer
+2017/01/16 14:08:59 [error] 60841#0: *4 [lua] bluegreen_api.lua:55: upstream_get(): service: backend2, client: 127.0.0.1, server: localhost, request: "GET /bgpub/ups/get?service=backend2 HTTP/1.1", host: "localhost:8899"
+2017/01/16 14:09:06 [error] 60841#0: *5 [lua] bluegreen_api.lua:55: upstream_get(): service: backend, client: 127.0.0.1, server: localhost, request: "GET /bgpub/ups/get?service=backend HTTP/1.1", host: "localhost:8899"
+2017/01/16 14:09:15 [error] 60841#0: *6 [lua] bluegreen_api.lua:55: upstream_get(): service: , client: 127.0.0.1, server: localhost, request: "GET /bgpub/ups/get?service= HTTP/1.1", host: "localhost:8899"
+2017/01/16 14:09:50 [error] 60841#0: *7 [lua] bluegreen_api.lua:55: upstream_get(): service: ss, client: 127.0.0.1, server: localhost, request: "GET /bgpub/ups/get?service=ss HTTP/1.1", host: "localhost:8899"
+2017/01/16 14:09:57 [error] 60841#0: *8 [lua] bluegreen_api.lua:55: upstream_get(): service: , client: 127.0.0.1, server: localhost, request: "GET /bgpub/ups/get HTTP/1.1", host: "localhost:8899"
+2017/01/16 14:10:20 [error] 60841#0: *9 [lua] bluegreen_api.lua:55: upstream_get(): service: ss, client: 127.0.0.1, server: localhost, request: "GET /bgpub/ups/get?service=ss HTTP/1.1", host: "localhost:8899"
+2017/01/16 14:10:22 [error] 60841#0: *10 [lua] bluegreen_api.lua:55: upstream_get(): service: , client: 127.0.0.1, server: localhost, request: "GET /bgpub/ups/get HTTP/1.1", host: "localhost:8899"

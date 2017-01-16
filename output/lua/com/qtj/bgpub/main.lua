@@ -23,10 +23,17 @@ package.path = string.format("%s;%s?.lua;%sconf/?.lua;%s/src/?.lua;%ssrc/lib/?.l
 -- -- 	redis_dal.conn()
 -- -- end
 
-local cjson = require "cjson"
+-- local cjson = require "cjson"
 local data = {}
 rawset(data, "id1", "val1")
 rawset(data, "id2", "val2")
 
-print("done")
+local sn = "abc_g1_g2"
+local li = sn:match('^.*()' .. "/")
+if li ~= nil  then
+	local re =string.sub(sn, 1, li - 1)
+	print("done: " .. li .. ", re: " .. re)
+else
+	print("no sn sub")
+end
 

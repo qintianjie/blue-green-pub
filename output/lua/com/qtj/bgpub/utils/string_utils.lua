@@ -24,4 +24,17 @@ _M.trim = function(str)
 	end
 end
 
+_M.last_indexof = function(self, str, split)
+	if str ~= nil and split ~= nil then
+		local last_index = str:match('^.*()' .. split)
+		if last_index ~= nil then
+			return last_index
+		end
+	else 
+		return -1
+	end
+
+	return -1;
+end
+
 return _M

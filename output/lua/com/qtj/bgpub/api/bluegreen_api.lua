@@ -13,6 +13,7 @@ local config_base 	   = require("configbase")
 local switch_enum      = config_base.switch_enum
 
 local upstream 		   = require ("ngx.upstream")
+local string_utils     = require ("utils.string_utils")
 
 -- 根据传入的 service_name ，从 redis 取相关规则数据，设置到 shared dict 中
 -- conf = {["s_key":xxx]} : s_key ==> 传入的服务名，可以逗号分隔为多个
@@ -49,18 +50,51 @@ _M.upstream_get = function ( self, conf )
 
     local get_servers = upstream.get_servers
 
+    local servicename = conf.s_key
     local ups_list = {}
+    ngx.log(ngx.ERR, "service: " .. servicename)
 
     for _, u in ipairs(ups) do
-        ngx.say("ups: " .. u)
+    	repeat 
 
-        local srvs, err = get_servers(u)
+			-- ngx.say("-----------> ups: " .. u )
+			local last_index = string_utils:last_indexof(u, "_")
+	    	if servicename ~= nil and string.len(servicename) > 0 and  u~= nil and string.len(u) > 0 then
+	    		if last_index == nil or last_index < 1 then
+	    			break;
+	    		end
 
-        if not srvs then
-            ngx.log(ngx.ERR, string.format("no server for upstream %s", u))
-        else 
-        	
-        end
+	    		local ups_prefix = string.sub(u, 1, last_index - 1)
+	    		if ups_prefix ~= servicename then
+	    			break;
+	    		end
+	    	end
+
+	        local srvs, err = get_servers(u)
+
+	        if not srvs then
+	            ngx.log(ngx.ERR, string.format("no server for upstream %s", u))
+	        else 
+	        	 for _, srv in ipairs(srvs) do
+	        	 	ngx.print("ups: " .. u .. " => ")
+		 	        local first = true
+	                for k, v in pairs(srv) do
+	                    if first then
+	                        first = false
+	                        ngx.print("    ")
+	                    else
+	                        ngx.print(", ")
+	                    end
+	                    if type(v) == "table" then
+	                        ngx.print(k, " = {", concat(v, ", "), "}")
+	                    else
+	                        ngx.print(k, " = ", v)
+	                    end
+	                end
+	                ngx.print(";\n")
+	        	 end
+	        end
+    	until true
     end
 end
 
