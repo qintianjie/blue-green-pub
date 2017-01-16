@@ -10,6 +10,9 @@ _M._VERSION = '1.0.0'
 local redis_biz 	 = require("biz.redis_biz")
 local error_code     = require('utils.error_code').info
 
+local upstream 		   = require ("ngx.upstream")
+local string_utils     = require ("utils.string_utils")
+
 -- 配置信息
 local config_base 	 = require("configbase")
 local switch_key    = config_base.fields["switch"]
@@ -152,6 +155,56 @@ _M.switchupdate = function (conf)
 		end
 	end
 	return "0", "succeed update switch value"
+end
+
+_M.upstream_get = function (self, conf) 
+	local ups = upstream.get_upstreams()
+    local get_servers = upstream.get_servers
+    
+    local servicename = conf.s_key
+
+    local ups_list = {}
+    for _, u in ipairs(ups) do
+    	repeat 
+    		local server_item = {}
+			-- ngx.say("-----------> ups: " .. u )
+			local last_index = string_utils:last_indexof(u, "_")
+	    	if servicename ~= nil and string.len(servicename) > 0 and  u~= nil and string.len(u) > 0 then
+	    		if last_index == nil or last_index < 1 then
+	    			break;
+	    		end
+
+	    		local ups_prefix = string.sub(u, 1, last_index - 1)
+	    		if ups_prefix ~= servicename then
+	    			break;
+	    		end
+	    	end
+
+	        local srvs, err = get_servers(u)
+
+	        if not srvs then
+	            ngx.log(ngx.ERR, string.format("no server for upstream %s", u))
+	        else 
+	        	for _, srv in ipairs(srvs) do
+		 	        local first = true
+		 	        local key_item = {}
+		 	        local ip_port = ""
+	                for k, v in pairs(srv) do
+	                	key_item[k] = v
+
+	                    if first then
+	                    	ip_port = v
+	                        first = false
+	                    end
+	                end
+
+	                server_item[ip_port] = key_item
+	        	end
+	        end
+	        ups_list[u] = server_item
+    	until true
+    end
+    return ups_list
 end
 
 return _M
