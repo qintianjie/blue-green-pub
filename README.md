@@ -13,12 +13,15 @@
    cd blue-green-pub/output
    
 4. pkill -9 nginx; rm -rf *temp; rm -rf logs/*; nginx -p `pwd`
-   curl "http://localhost:8899/bgpub/ruleset?service=ss,apollo,aka"
-   curl "http://localhost:8899/bgpub/ruleget?service=apollo"
-   curl "http://localhost:8899/bgpub/switchupdate?service=apollo&switch=TEST"
-   curl "http://localhost:8899/bgpub/ruledelete?service=apollo"
+   curl "http://localhost:8899/bgpub/rule/set?service=ss,apollo,aka"
+   curl "http://localhost:8899/bgpub/rule/get?service=apollo"
+   curl "http://localhost:8899/bgpub/rule/delete?service=apollo"
+   
+   curl "http://localhost:8899/bgpub/switch/update?service=apollo&switch=TEST"
+   
    curl "http://localhost:8899/bgpub/ups/get?service=backend&group=g1"
    curl "http://localhost:8899/bgpub/ups/save_to_redis?service=&group="
+   
    tail -f logs/*log
    
 Tips:  change redis config from lua/conf/configbase.lua
