@@ -17,4 +17,12 @@ _M.containKey = function (tbl, key)
 	return false;
 end
 
+_M.array_in = function (arr, key)
+	for i in pairs(arr) do
+		 local k = arr[i]
+		 if k == key then return true; end
+	end
+	return false
+end
+
 return _M

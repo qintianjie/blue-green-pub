@@ -14,12 +14,14 @@ local upstream 		   = require ("ngx.upstream")
 local string_utils     = require ("utils.string_utils")
 
 -- 配置信息
-local config_base 	 = require("configbase")
+local config_base 	= require("configbase")
 local switch_key    = config_base.fields["switch"]
 local optype_key    = config_base.fields["optype"]
 local opdata_key    = config_base.fields["opdata"]
+local ups_group     = config_base.ups_group
 
-local string_utils = require "utils.string_utils"
+local string_utils     = require "utils.string_utils"
+local collection_utils = require "utils.collection_utils"
 
 -- 规则缓存在 nginx dict 名
 local rule_data_cache = ngx.shared["dict_rule_data"]
@@ -71,6 +73,23 @@ _M.ruleset = function (conf)
 	      	  end
 	        end
 	    end
+
+	    -- if red then
+	    -- 	local temp_t = {["k1"]="v1", ["grayType"]="unamein"}
+	    -- 	local redis = red.redis 
+	    -- 	-- red:hmset("bizgray:gray:apollo", "temp", temp)
+	    -- 	-- local res, err = redis:hmset("biztech:gray:apollo", "switch", nil, "grayType", "uidmod")
+	    -- 	-- HMSET biztech:gray:apollo graySwitch true grayType in grayData 111,222,333
+
+	    -- 	local res, err = redis:hmset("biztech:gray:apollo", "abc", cjson.encode(temp_t))
+	    -- 	local bb, err = redis:hget("biztech:gray:apollo", "abc")
+	    -- 	local t_001 = cjson.decode(bb)
+	    -- 	t_001["k1"] = "abcdkkkk"
+	    -- 	redis:hmset("biztech:gray:apollo", "abc", cjson.encode(t_001))
+
+	    -- 	redis:hdel("biztech:gray:apollo", "switch")
+	    -- 	ngx.say("====> bb: " .. t_001["k1"])
+	    -- end
 
 	    -- will close current redis connect
 	    if red then redis_biz.setKeepalive(red) end
@@ -166,8 +185,6 @@ _M.upstream_get = function (self, conf)
     local servicename = conf.s_key
     local groupname = conf.g_key
 
-    ngx.log(ngx.ERR, "=====> groupname: " .. groupname .. ", servicename: " .. servicename)
-
     local ups_list = {}
     for _, u in ipairs(ups) do
     	repeat 
@@ -191,7 +208,6 @@ _M.upstream_get = function (self, conf)
 	    		end
 
 	    		local ups_sufix = string.sub(u, last_index + 1, -1)
-	    		ngx.log(ngx.ERR, "=====> groupname: " .. ups_sufix)
 	    		if ups_sufix ~= groupname then
 	    			break;
 	    		end
@@ -223,6 +239,130 @@ _M.upstream_get = function (self, conf)
     	until true
     end
     return ups_list
+end
+
+-- _M.upstream_save_to_redis = function (self, conf)
+-- 	local s_key = conf.s_key
+-- 	local g_key = conf.g_key
+-- 	local value = conf.value
+-- 	local red, err = redis_biz.redisconn()
+-- 	if not red then
+-- 		local info = error_code.REDIS_CONNECT_ERROR 
+-- 	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
+-- 	    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
+--     	return -1;
+-- 	else
+-- 		local redis = red.redis 
+-- 		local service_key = table.concat({config_base.prefixConf["policyPrefix"],s_key},":")
+-- 		local ok, err = redis:hmset(service_key, g_key, cjson.encode(value))
+-- 		if err ~= nil then
+-- 			ngx.log(ngx.ERR, string.format("Error when save ups[%s] to redis. err: %s", s_key, cjson.encode(err)))
+-- 			return -1;
+-- 		else 
+-- 			return 0;
+-- 		end 
+-- 	end
+-- 	return -1;
+-- end
+
+_M.upstream_save_to_redis = function (self, conf)
+	local s_key = conf.s_key
+	local g_key = conf.g_key
+	local value = conf.value
+	local red, err = redis_biz.redisconn()
+	if not red then
+		local info = error_code.REDIS_CONNECT_ERROR 
+	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
+	    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
+    	return -1;
+	else
+		local redis = red.redis 
+
+		if s_key ~= nil and string.len(s_key) > 0 and g_key ~= nil and string.len(g_key) > 0 then
+			local service_key = table.concat({config_base.prefixConf["policyPrefix"],s_key},":")
+			local hash_key    = "_" .. g_key
+			local hash_value  = value[service_key .. hash_key]
+
+			local ok, err = redis:hmset(service_key, hash_key, cjson.encode(value))
+			if err ~= nil then
+				ngx.log(ngx.ERR, string.format("Error when save ups[%s] to redis. err: %s", hash_key, cjson.encode(err)))
+				return -1;
+			else 
+				return 0;
+			end
+		end
+
+		if s_key ~= nil and string.len(s_key) > 0 and (g_key == nil or string.len(g_key) == 0) then
+			local service_key = table.concat({config_base.prefixConf["policyPrefix"],s_key},":")
+
+			for i in pairs(ups_group) do
+		        local group = ups_group[i]
+		        local hash_key    = "_" .. group
+
+		        local value_key = s_key .. hash_key
+
+		        if value ~= nil then
+		        	for k, v in pairs(value) do
+		        		if string.lower(value_key) == string.lower(k) then
+		        			local ok, err = redis:hmset(service_key, hash_key, cjson.encode(v))
+		        			if err ~= nil then
+		        				ngx.log(ngx.ERR, string.format("Error when save ups[%s] to redis. err: %s", hash_key, cjson.encode(err)))
+		        			end
+		        		end
+		        	end
+		        end
+		    end
+
+			return 2
+		end
+
+		if (s_key == nil or string.len(s_key) == 0) and g_key ~= nil and string.len(g_key) > 0 and collection_utils.array_in(ups_group, g_key) then
+			if value ~= nil then
+				local g_key_len = string.len(g_key)
+	        	for k, v in pairs(value) do
+	        		local k_sufix = string.sub(k, (0 - g_key_len))
+
+	        		if k ~= nil and string.len(k) > (g_key_len + 2) and g_key == string.sub(k, (0 - g_key_len)) then
+	        			local s_name = string.sub(k, 1, (-2 - g_key_len))
+	        			local service_key = table.concat({config_base.prefixConf["policyPrefix"],s_name},":")
+	        			local hash_key = "_" .. g_key
+	        			local ok, err = redis:hmset(service_key, hash_key, cjson.encode(v))
+	        			if err ~= nil then
+	        				ngx.log(ngx.ERR, string.format("Error when save ups[%s] to redis. err: %s", hash_key, cjson.encode(err)))
+	        			end
+	        		end
+	        	end
+	        end
+			return 3
+		end
+
+		local result = 4
+		if value ~= nil then
+			for k, v in pairs(value) do
+				repeat
+					local last_index = string_utils:last_indexof(k, "_")
+		        	if last_index == nil or last_index < 1 or last_index == string.len(k) then
+		    			break;
+		    		end
+
+		    		local s_name = string.sub(k, 1, last_index - 1)
+		    		local g_name = string.sub(k, last_index + 1, string.len(k))
+		    		if collection_utils.array_in(ups_group, g_name) then
+		    			local service_key = table.concat({config_base.prefixConf["policyPrefix"],s_name},":")
+	        			local hash_key = "_" .. g_name
+	        			local ok, err = redis:hmset(service_key, hash_key, cjson.encode(v))
+	        			if err ~= nil then
+	        				ngx.log(ngx.ERR, string.format("Error when save ups[%s] to redis. err: %s", hash_key, cjson.encode(err)))
+	        				result = -1
+	        			end
+		    		end
+				until true
+	        end
+	        return result
+		end
+		return -1
+	end
+	return -1;
 end
 
 return _M

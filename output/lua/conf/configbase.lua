@@ -22,6 +22,9 @@ _M.prefixConf = {
     -- ["policyPrefix"]     = 'bizgray'
 } 
 
+
+_M.ups_group = {"g1", "g2"} 
+
 _M.fields = {
     -- ['switch']           = 'switch',
     -- ['optype']           = 'optype',

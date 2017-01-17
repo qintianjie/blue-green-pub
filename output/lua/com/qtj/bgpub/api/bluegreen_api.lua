@@ -50,6 +50,12 @@ _M.upstream_get = function ( self, conf )
 	return result
 end
 
+_M.upstream_save_to_redis = function ( self, conf )
+	local result = bluegreen_biz:upstream_get(conf)
+	conf["value"] = result
+	return bluegreen_biz:upstream_save_to_redis(conf)
+end
+
 _M.init_worker = function (self) 
 	if ngx.worker.id() == 0 then
 		local pfunc = function ()

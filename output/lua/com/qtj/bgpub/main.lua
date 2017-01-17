@@ -37,5 +37,9 @@ else
 	print("no sn sub")
 end
 
-print(string.sub(sn, 2, -1))
+local arr = {"_g1", "_g2"}
+
+
+print(string.sub(sn, 1, -2))
+print ("abc" == "abc")
 
