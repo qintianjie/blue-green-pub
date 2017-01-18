@@ -21,6 +21,8 @@
    
    curl "http://localhost:8899/bgpub/ups/get?service=backend&group=g1"
    curl "http://localhost:8899/bgpub/ups/save_to_redis?service=&group="
+   curl "http://localhost:8899/bgpub/ups/add_server?upstream=backend_g2&ipaddr=127.0.0.2:8093"
+   curl "http://localhost:8899/bgpub/ups/remove_server?upstream=backend_g2&ipaddr=127.0.0.2:8093"
    
    tail -f logs/*log
    
