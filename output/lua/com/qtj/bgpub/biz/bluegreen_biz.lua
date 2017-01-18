@@ -241,30 +241,6 @@ _M.upstream_get = function (self, conf)
     return ups_list
 end
 
--- _M.upstream_save_to_redis = function (self, conf)
--- 	local s_key = conf.s_key
--- 	local g_key = conf.g_key
--- 	local value = conf.value
--- 	local red, err = redis_biz.redisconn()
--- 	if not red then
--- 		local info = error_code.REDIS_CONNECT_ERROR 
--- 	    local desc = "Redis connect error [" .. cjson.encode(redisConf) .. "]" 
--- 	    ngx.log(ngx.ERR, '[BIZ] code: "', info[1], '". RedisConf: [' , cjson.encode(redisConf),  '] ', err)
---     	return -1;
--- 	else
--- 		local redis = red.redis 
--- 		local service_key = table.concat({config_base.prefixConf["policyPrefix"],s_key},":")
--- 		local ok, err = redis:hmset(service_key, g_key, cjson.encode(value))
--- 		if err ~= nil then
--- 			ngx.log(ngx.ERR, string.format("Error when save ups[%s] to redis. err: %s", s_key, cjson.encode(err)))
--- 			return -1;
--- 		else 
--- 			return 0;
--- 		end 
--- 	end
--- 	return -1;
--- end
-
 _M.upstream_save_to_redis = function (self, conf)
 	local s_key = conf.s_key
 	local g_key = conf.g_key

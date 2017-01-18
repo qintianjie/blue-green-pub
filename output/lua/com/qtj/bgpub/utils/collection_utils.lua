@@ -25,4 +25,16 @@ _M.array_in = function (arr, key)
 	return false
 end
 
+_M.table_size = function (table)
+	if table == nil or type(table) ~= "table" or next(table) == nil then
+		return 0
+	else
+		local count = 0
+		for k, v in pairs(table) do
+			count = count + 1
+		end
+		return count
+	end
+end
+
 return _M
