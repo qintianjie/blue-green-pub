@@ -13,10 +13,12 @@
   针对 nginx 的改造有两种途径：   
   <table>
    <tr>
-    <td>\方法</td><td>直接改动 nginx 源码</td><td>Openresty 加 Lua 代码</td>
+    <td>方法</td><td>直接改动 nginx 源码</td><td>Openresty 加 Lua 代码</td>
    </tr>
    <tr>
     <td>优点</td><td>想干啥就干啥</td><td> Nginx 没修改，可以平滑升级</td>
+   </tr>
+   <tr>
     <td>缺点</td><td>定制了，难以升级</td><td> 依赖 Openresty， 不少功能受限，还得增加 Nginx module</td>
    </tr>
   </table>
