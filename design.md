@@ -13,7 +13,7 @@
   针对 nginx 的改造有两种途径：   
   <table>
    <tr>
-    <td>方法</td><td>直接改动 nginx 源码</td><td>Openresty 加 Lua 代码</td>
+   <th>方法</th><th>直接改动 nginx 源码</th><th>Openresty 加 Lua 代码</th>
    </tr>
    <tr>
     <td>优点</td><td>想干啥就干啥</td><td> Nginx 没修改，可以平滑升级</td>
