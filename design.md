@@ -8,25 +8,29 @@
     <b>关键点：</b> 动态 upstream、流量在两组内自动切换  
     
 # Design
-  针对HTTP请求，从入口开始改造，So 也就是Nginx 改造。   
+  ### 针对HTTP请求，从入口开始改造，So 也就是Nginx 改造。   
   
-  针对 nginx 的改造有两种途径：   
-  <table>
-   <tr bgcolor="#FF0000">
-      <th>方法</th>
-      <th>直接改动 nginx 源码</th>
-      <th>Openresty 加 Lua 代码</th>
-   </tr>
-   <tr>
-      <td>优点</td>
-      <td>想干啥就干啥</td>
-      <td>未改动Nginx代码，Nginx可以平滑升级</td>
-   </tr>
-   <tr>
-      <td>缺点</td>
-      <td>定制化Nginx，难以升级<br/>对C、网络、Nginx要非常熟练，技能要求高</td>
-      <td>依赖 Openresty， 不少功能受限<br/>需掌握 Lua</td>
-   </tr>
-  </table>
+   针对 nginx 的改造有两种途径：   
+   <table>
+    <tr bgcolor="#FF0000">
+       <th>方法</th>
+       <th>直接改动 nginx 源码</th>
+       <th>Openresty 加 Lua 代码</th>
+    </tr>
+    <tr>
+       <td>优点</td>
+       <td>想干啥就干啥</td>
+       <td>未改动Nginx代码，Nginx可以平滑升级</td>
+    </tr>
+    <tr>
+       <td>缺点</td>
+       <td>定制化Nginx，难以升级<br/>对C、网络、Nginx要非常熟练，技能要求高</td>
+       <td>依赖 Openresty， 不少功能受限<br/>需掌握 Lua</td>
+    </tr>
+   </table>
+
+   根据需求，考虑改造 Openresty 实现。
+   
+ ### 改造思路
   
 # Sample
