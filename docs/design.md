@@ -8,7 +8,7 @@
     <b>关键点：</b> 动态 upstream、流量在两组内自动切换   
     
 # 设计
-  ### 针对HTTP请求，从入口开始改造，So 也就是Nginx 改造。   
+### 针对HTTP请求，从入口开始改造，So 也就是Nginx 改造。   
   
    针对 nginx 的改造有两种途径：   
    <table>
@@ -31,24 +31,26 @@
 
    根据需求，考虑改造 Openresty 实现。
    
- ### 灰度测试改造思路
+### 灰度测试改造思路
  ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/gray_test.png)
  ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/001_gray_test.jpg)
  
- ### 蓝绿上线
+### 蓝绿上线
+图中 OS1 需修改为 PS1   
  ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/002_gray_pub.jpg)
  ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/003_gray_pub.jpg)
  ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/004_gray_pub.jpg)
  
 # 注意点
 ### 灰度测试实现 
-  * Nginx 开辟缓存ngx.shared.DICT，将相关数据从 redis 导入 缓存加快线上请求处理速度   
-  * 数据一致性、性能及实现复杂度考虑，变化数据从 redis 主动push到缓存，不考虑缓存拉的操作    
+* Nginx 开辟缓存ngx.shared.DICT，将相关数据从 redis 导入 缓存加快线上请求处理速度   
+* 数据一致性、性能及实现复杂度考虑，变化数据从 redis 主动push到缓存，不考虑缓存拉的操作    
   
 ### 蓝绿发布实现
-  * 采用开源 Nginx module 实现动态添加 upstream server    
-  * Nginx 配置 location ，提供 http 操作    
-  * 最好通过 lua 方式 add / remove server， 这样可以对 upstream 继续操作.    
-  * Nginx 不允许 upstream 里 server = 0 情况，如需要得修改 nginx 源码(ngx_http_upstream.c)重新编译。    
+* 采用开源 Nginx module 实现动态添加 upstream server    
+* Nginx 配置 location ，提供 http 操作    
+* 最好通过 lua 方式 add / remove server， 这样可以对 upstream 继续操作.    
+* Nginx 不允许 upstream 里 server = 0 情况，如需要得修改 nginx 源码(ngx_http_upstream.c)重新编译。 
+
 ### 最佳 Nginx Module
   开发一个 Nginx Module， 内存结构采用 Nginx Plus实现的 Zone 保存线上各 upstream 的 server, 每个请求过来时，走 zone 拿 server 列表再继续往后走其他处理操作。 同时提供 Lua 模块，达到无侵入性处理。
