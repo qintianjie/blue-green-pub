@@ -31,6 +31,13 @@
 
    根据需求，考虑改造 Openresty 实现。
    
- ### 改造思路
+ ### 灰度测试改造思路
+ ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/gray_test.png)
+ ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/001_gray_test.jpg)
+ 
+ ### 蓝绿上线
+ ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/002_gray_pub.jpg)
+ ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/003_gray_pub.jpg)
+ ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/004_gray_pub.jpg)
   
 # Sample
