@@ -50,7 +50,6 @@
 * 采用开源 Nginx module 实现动态添加 upstream server    
 * Nginx 配置 location ，提供 http 操作    
 * 最好通过 lua 方式 add / remove server， 这样可以对 upstream 继续操作.    
-* Nginx 不允许 upstream 里 server = 0 情况，如需要得修改 nginx 源码(ngx_http_upstream.c)重新编译。 
-
+* Nginx 不允许 upstream 里 server = 0 情况，如需要得修改 nginx 源码(ngx_http_upstream.c)重新编译。 也可以对最后一个 server set down.
 ### 最佳 Nginx Module
   开发一个 Nginx Module， 内存结构采用 Nginx Plus实现的 Zone 保存线上各 upstream 的 server, 每个请求过来时，走 zone 拿 server 列表再继续往后走其他处理操作。 同时提供 Lua 模块，达到无侵入性处理。
