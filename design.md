@@ -10,11 +10,15 @@
 # Design
   针对HTTP请求，从入口开始改造，So 也就是Nginx 改造。   
   
-  针对 nginx 的改造有两种途径：    
-  | \方法  | 直接改动 nginx 源码 | Openresty 加 Lua 代码 |    
-  | ------------- | ------------- | ------------- |   
-  | 优点  | 想干啥就干啥  | Nginx 没修改，可以平滑升级 |   
-  | 缺点  | 定制了，难以升级  | 依赖 Openresty， 不少功能受限，还得增加 Nginx module |   
-  
+  针对 nginx 的改造有两种途径：   
+  <table>
+   <tr>
+    <td>\方法</td><td>直接改动 nginx 源码</td><td>Openresty 加 Lua 代码</td>
+   </tr>
+   <tr>
+    <td>优点</td><td>想干啥就干啥</td><td> Nginx 没修改，可以平滑升级</td>
+    <td>缺点</td><td>定制了，难以升级</td><td> 依赖 Openresty， 不少功能受限，还得增加 Nginx module</td>
+   </tr>
+  </table>
   
 # Sample
