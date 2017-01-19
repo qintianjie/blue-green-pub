@@ -12,7 +12,7 @@
   
   针对 nginx 的改造有两种途径：   
   <table>
-   <tr>
+   <tr bgcolor="#FF0000">
    <th>方法</th><th>直接改动 nginx 源码</th><th>Openresty 加 Lua 代码</th>
    </tr>
    <tr>
