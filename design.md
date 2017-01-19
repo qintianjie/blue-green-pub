@@ -13,13 +13,19 @@
   针对 nginx 的改造有两种途径：   
   <table>
    <tr bgcolor="#FF0000">
-   <th>方法</th><th>直接改动 nginx 源码</th><th>Openresty 加 Lua 代码</th>
+      <th>方法</th>
+      <th>直接改动 nginx 源码</th>
+      <th>Openresty 加 Lua 代码</th>
    </tr>
    <tr>
-    <td>优点</td><td>想干啥就干啥</td><td> Nginx 没修改，可以平滑升级</td>
+      <td>优点</td>
+      <td>想干啥就干啥</td>
+      <td>未改动Nginx代码，Nginx可以平滑升级</td>
    </tr>
    <tr>
-    <td>缺点</td><td>定制了，难以升级</td><td> 依赖 Openresty， 不少功能受限，还得增加 Nginx module</td>
+      <td>缺点</td>
+      <td>定制化Nginx，难以升级<br/>对C、网络、Nginx要非常熟练，技能要求高</td>
+      <td>依赖 Openresty， 不少功能受限<br/>需掌握 Lua</td>
    </tr>
   </table>
   
