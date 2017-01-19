@@ -41,11 +41,11 @@
  ![image](https://github.com/qintianjie/blue-green-pub/blob/master/docs/pics/004_gray_pub.jpg)
  
 # 注意点
- ### 灰度测试实现 
+### 灰度测试实现 
   * Nginx 开辟缓存ngx.shared.DICT，将相关数据从 redis 导入 缓存加快线上请求处理速度   
   * 数据一致性、性能及实现复杂度考虑，变化数据从 redis 主动push到缓存，不考虑缓存拉的操作    
   
- ### 蓝绿发布实现
+### 蓝绿发布实现
   * 采用开源 Nginx module 实现动态添加 upstream server    
   * Nginx 配置 location ，提供 http 操作    
   * 最好通过 lua 方式 add / remove server， 这样可以对 upstream 继续操作.    
