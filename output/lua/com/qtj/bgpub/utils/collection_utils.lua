@@ -8,6 +8,14 @@ local _M = {}
 
 _M._VERSION = '1.0.0'
 
+_M.isTableEmpty = function (t)
+	if t == nil or _G.next(t) == nil then
+		return true
+	else
+		return false
+	end
+end
+
 
 -- table contain key 
 _M.containKey = function (tbl, key)

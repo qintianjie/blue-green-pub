@@ -42,4 +42,6 @@ local arr = {"_g1", "_g2"}
 
 print(string.sub(sn, 1, -2))
 print ("abc" == "abc")
+sn = ''
+print("sn.len: " .. string.len(sn) .. ", " .. #sn)
 
