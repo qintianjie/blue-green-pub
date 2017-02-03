@@ -1,0 +1,1 @@
+ngx.var._UPS = "apollo_g2"
