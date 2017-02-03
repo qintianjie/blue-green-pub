@@ -45,3 +45,16 @@ print ("abc" == "abc")
 sn = ''
 print("sn.len: " .. string.len(sn) .. ", " .. #sn)
 
+
+local myfun = function ( )
+	local a = tonum(12)
+	return a
+end
+local function __TRACKBACK__(msg)
+	print ("wakka: " .. msg)
+	return -1
+end
+-- local b = xpcall(myfun(), __TRACKBACK__())
+local ret, msg = xpcall(myfun, __TRACKBACK__())
+print("b: " .. msg .. ", status: " .. tostring(ret))
+

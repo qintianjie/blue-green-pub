@@ -12,6 +12,9 @@ local collection_utils = require("utils.collection_utils")
 local config_base 	   = require("configbase")
 local switch_enum      = config_base.switch_enum
 
+local upstream = require "ngx.upstream"
+local add_server = upstream.add_server
+
 -- local upstream 		   = require ("ngx.upstream")
 -- local string_utils     = require ("utils.string_utils")
 
@@ -36,7 +39,7 @@ end
 
 -- update switch for a service
 _M.switchupdate = function ( self, conf )
-	if collection_utils.containKey(switch_enum, conf.switch_value) then
+	if collection_utils.containKey(switch_enum, string.lower(conf.switch_value)) then
 		local ok, err = bluegreen_biz.switchupdate(conf)
 		return ok, err
 	else
@@ -57,59 +60,88 @@ _M.upstream_save_to_redis = function ( self, conf )
 end
 
 _M.init_worker = function (self) 
-	if ngx.worker.id() == 0 then
-		local pfunc = function ()
-			ngx.log(ngx.ERR, "=====> init work for work 0")
-			local concat = table.concat
-            local upstream = require "ngx.upstream"
-            local get_servers = upstream.get_servers
-            local get_upstreams = upstream.get_upstreams
-            
-            local us = get_upstreams()
-            for _, u in ipairs(us) do
-            	ngx.log(ngx.ERR, "=====> ups: " .. u)
-                -- ngx.say("upstream ", u, ":")
-                -- local srvs, err = get_servers(u)
-                -- if not srvs then
-                --     ngx.say("failed to get servers in upstream ", u)
-                -- else
-                --     for _, srv in ipairs(srvs) do
-                --         local first = true
-                --         for k, v in pairs(srv) do
-                --             if first then
-                --                 first = false
-                --                 ngx.print("    ")
-                --             else
-                --                 ngx.print(", ")
-                --             end
-                --             if type(v) == "table" then
-                --                 ngx.print(k, " = {", concat(v, ", "), "}")
-                --             else
-                --                 ngx.print(k, " = ", v)
-                --             end
-                --         end
-                --         ngx.print("\\n")
-                --     end
-                -- end
-            end
 
-		--     local code, data =  bizSetDataModule:getGrayServiceNames()
-		--     if code ~= 200 then
-		-- 		ngx.log(ngx.ERR, "[API_init_worker] error: ", data)
-		--     else
-		-- 	    local value = "";
-		-- 	    for k, v in pairs(data) do
-		-- 	    	value = value .. v .. ","
-		-- 	    end
-		-- 	    value=string.sub(value, 1, -2)
-		-- 	    local conf = {["s_key"] = value }
-		-- 	    ngx.log(ngx.INFO, "[API_init_worker] init service : [" .. value .. "]")
-		-- 	  	return bizSetDataModule:setRedisDataToDict(conf)
-		--     end
-		end
-		  
-		ngx.timer.at(0, pfunc) 
+	local handler_when_start
+	-- do work when start or reload nginx, only one work do it.
+	handler_when_start = function ( )
+		ngx.log(ngx.ERR, "=====> init work for work 0")
+		local concat = table.concat
+        local upstream = require "ngx.upstream"
+        local get_servers = upstream.get_servers
+        local get_upstreams = upstream.get_upstreams
+        
+        local us = get_upstreams()
+        for _, u in ipairs(us) do
+        	ngx.log(ngx.ERR, "------> ups: " .. u)
+        end
 	end
+
+	if ngx.worker.id() == 0 then
+		ngx.timer.at(0, handler_when_start) 
+	end 
+
+	local delay_schedule = 5  -- 3s
+	local handler_schedule
+	-- do work for each worker, such as change upstream server for each worker
+	handler_schedule = function ()
+		-- local conf = {["s_key"] = s_key, ["g_key"] = g_key}
+		-- local bluegreen_biz    = require("biz.bluegreen_biz")
+        local result = bluegreen_biz:upstream_get({})
+        local upsMap = {}
+        if result ~= nil then
+        	for k, v in pairs(result) do
+        		upsMap[k] = v
+        	end
+    	end
+
+	 	-- ngx.log(ngx.ERR, "========> schedule for each worker.")
+		local concat = table.concat
+        local upstream = require "ngx.upstream"
+        local get_servers = upstream.get_servers
+        local get_upstreams = upstream.get_upstreams
+        
+        local us = get_upstreams()
+        for _, u in ipairs(us) do
+        	repeat
+        		if collection_utils.containKey(result, u) then
+	        		local upsServerList = upsMap[u]
+	        		-- ngx.log(ngx.ERR, "------> ups[".. ngx.worker.id() .. "]: " .. k .. ", v: " .. u .. "; ups: " .. cjson.encode(upsServerList))
+
+	        		for sk, sv in pairs(upsServerList) do
+	        			-- ngx.log(ngx.ERR, u .. "---k: " .. sk .. ", v: " .. cjson.encode(sv) .. ", ADDR: " .. sv["addr"])
+	        			
+	        			local abc = function () 
+	        				return -1, "exist" 
+	        			end
+	        			-- ngx.log(ngx.ERR, "---> " .. sv["addr"])
+			            -- local add_server = upstream.add_server
+			            local ret, ok,err = xpcall(add_server(u, sv["addr"], 1, 1, 10, false), abc)
+			            if ret ~= nil and ret then
+			            	ngx.log(ngx.ERR, "====================> " .. tostring(ret) .. " : ok: " .. ok)
+			            else
+			            	-- ngx.log(ngx.ERR, "-----> " .. tostring(ret) .. " : ok: " .. ok)
+			            end
+			            
+	        		end
+	        		-- ngx.log(ngx.ERR, "----u done. u: " .. u)
+	        	else
+	        		break
+	        	end
+        	until true
+        end
+
+	    local ok, err = ngx.timer.at(delay_schedule, handler_schedule)
+	    if not ok then
+	        ngx.log(ngx.ERR, "failed to create the timer: ", err)
+	        return
+	    end
+	end
+
+	local ok, err = ngx.timer.at(delay_schedule, handler_schedule)
+	 if not ok then
+	     ngx.log(ngx.ERR, "failed to create the timer: ", err)
+	     return
+	 end
 end
 
 return _M
