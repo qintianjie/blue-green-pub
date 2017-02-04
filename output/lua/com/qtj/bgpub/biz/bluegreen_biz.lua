@@ -101,7 +101,7 @@ end
 -- get ruledata from ngx.shared.dict
 _M.ruleget = function (conf)
 	local service_name = conf.s_key
-	local rule_data_cache = ngx.shared["dict_rule_data"]
+	-- local rule_data_cache = ngx.shared["dict_rule_data"]
 	local result = {}
 
 	if service_name and string.len(service_name) > 0 then
@@ -195,7 +195,7 @@ local sync_redis_to_dict = function ( )
 
 			local keyDict = {}
 	        for _, u in ipairs(us) do
-	        	ngx.log(ngx.ERR, "------> ups: " .. u)
+	        	-- ngx.log(ngx.ERR, "------> ups: " .. u)
 
 	        	repeat
 	        		local last_index = string_utils:last_indexof(u, "_")
@@ -209,7 +209,7 @@ local sync_redis_to_dict = function ( )
 		        	else
 		        		keyDict[ups_sufix] = "true"
 		        	end
-		        	ngx.log(ngx.ERR, "[service]------> service: " .. ups_sufix)
+		        	-- ngx.log(ngx.ERR, "[service]------> service: " .. ups_sufix)
 	          		-- 构造 redis key:   policyPrefix:servicename 格式
 	          		local service_key = table.concat({config_base.prefixConf["policyPrefix"],ups_sufix},":")
 
@@ -217,6 +217,26 @@ local sync_redis_to_dict = function ( )
 	          		local switch = redis:hget(service_key, switch_key)
 	          		local optype = redis:hget(service_key, optype_key)
 	          		local opdata = redis:hget(service_key, opdata_key)
+
+	          		for _, k in ipairs(ups_group) do
+	          			local data_cache_ups_size_key = service_key .. ":_" .. k
+	          			local group_content = redis:hget(service_key, "_" .. k)   -- _g1, _g2
+	          			local upsSize = 0
+
+	          			if group_content ~= nil and type(group_content) == "string" then
+	          				local gcJson = cjson.decode(group_content)
+	          				for k, v in pairs(gcJson) do
+	          					if v ~=nil and type(v) == "string" then
+	          						local downIndex = string.find(v, "down")
+	          						if downIndex == nil then upsSize = upsSize + 1 end
+	          					end
+	          				end
+	          				-- ngx.log(ngx.ERR, "---> k: " .. k)
+	          			end
+	          			-- ngx.log(ngx.ERR, "---> k: " .. data_cache_ups_size_key .. ", size: " .. upsSize)
+	          			rule_data_cache:set(data_cache_ups_size_key, upsSize)
+	          		end
+
 
 	          		-- data[s_key .. "." .. switch_key] = switch
 	          		-- data[s_key .. "." .. optype_key] = optype

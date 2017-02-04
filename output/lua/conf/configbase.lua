@@ -34,11 +34,17 @@ _M.fields = {
     ['opdata']           = 'grayData'
 }
 
+_M.optypes = {
+    ["uidin"]        = 'uidin',
+    ["uidmod"]       = 'uidmod',
+    ["unamein"]      = 'unamein'
+} 
+
 _M.switch_enum = {
     ['test']          = 'TEST',  -- for test
     ['online_auto']   = 'ONLINE_AUTO', -- for online, auto load balance between blue and green upstream
-    ['online_manual'] = 'ONLINE_MANUAL',
-    ['clone']         = 'CLOSE'
+    -- ['online_manual'] = 'ONLINE_MANUAL',
+    ['close']         = 'CLOSE'
 }
 
 
