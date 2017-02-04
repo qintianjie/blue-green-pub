@@ -49,7 +49,7 @@ else
 	local ups_g2_name = s_key .. "_g2"
 
 	-- if no uid or switch is close, visit the more server upstream
-	if (s_uid == 0 and s_uname = "") or string.lower(service_switch) == "close" then
+	if (s_uid == 0 and s_uname == "") or string.lower(service_switch) == "close" then
 		if ups_g1_size < ups_g2_size then 
 			ngx.var._UPS = ups_g2_name
 		else
@@ -57,6 +57,15 @@ else
 		end
 		return
 	end
+
+	local params = {}
+	params["uid"]         = s_uid
+	params["uname"]       = s_uname
+	params["rule_data"]   = opdata
+	params["ups_g1_size"] = ups_g1_size
+	params["ups_g2_size"] = ups_g2_size
+	params["ups_g1_name"] = ups_g1_name
+	params["ups_g2_name"] = ups_g2_name
 
 	-- test: do it by rule
 	if string.lower(service_switch) == "test" then
@@ -66,47 +75,13 @@ else
 			optype = "uidin"
 		end
 		local policy = require("policy.policy_" .. optype)
-		local params = {}
-
-		params["uid"]         = s_uid
-		params["uname"]       = s_uname
-		params["rule_data"]   = opdata
-		params["ups_g1_size"] = ups_g1_size
-		params["ups_g2_size"] = ups_g2_size
-		params["ups_g1_name"] = ups_g1_name
-		params["ups_g2_name"] = ups_g2_name
-
+		
 		local ups = policy.process(params)
-
 		ngx.var._UPS = ups
 	elseif string.lower(service_switch) == "online_auto" then -- do it auto
 		local policy = require("policy.policy_online_auto")
-		local params = {}
-		params["uid"]         = s_uid
-		params["uname"]       = s_uname
-		params["rule_data"]   = opdata
-		params["ups_g1_size"] = ups_g1_size
-		params["ups_g2_size"] = ups_g2_size
-		params["ups_g1_name"] = ups_g1_name
-		params["ups_g2_name"] = ups_g2_name
-
 		local ups = policy.process(params)
-
 		ngx.var._UPS = ups
-
-		-- if ups_g1_size == 0 then 
-		-- 	ngx.var._UPS = ups_g2_name
-		-- elseif ups_g2_size == 0 then
-		-- 	ngx.var._UPS = ups_g1_name
-		-- else
-		-- 	local server_size = ups_g1_size + ups_g2_size
-		-- 	local userid_num = tonumber(s_uid)
-		-- 	if userid_num ~= nil and userid_num > 0 and userid_num % server_size < ups_g1_size then
-		-- 		ngx.var._UPS = ups_g1_name
-		-- 	else
-		-- 		ngx.var._UPS = ups_g2_name
-		-- 	end
-		-- end
 	else -- default is close
 		if ups_g1_size < ups_g2_size then 
 			ngx.var._UPS = ups_g2_name
