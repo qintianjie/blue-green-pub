@@ -11,7 +11,10 @@ local redis_biz 	 = require("biz.redis_biz")
 local error_code     = require('utils.error_code').info
 
 local upstream 		   = require ("ngx.upstream")
+
+-- 工具类
 local string_utils     = require ("utils.string_utils")
+local collection_utils = require ("utils.collection_utils")
 
 -- 配置信息
 local config_base 	= require("configbase")
@@ -20,7 +23,7 @@ local optype_key    = config_base.fields["optype"]
 local opdata_key    = config_base.fields["opdata"]
 local ups_group     = config_base.ups_group
 
-local collection_utils = require ("utils.collection_utils")
+
 
 -- 规则缓存在 nginx dict 名
 local rule_data_cache = ngx.shared["dict_rule_data"]
@@ -37,7 +40,7 @@ _M.ruleset = function (conf)
     	return info[1], desc
 	else
 		local redis = red.redis 
-	    local service_key_arr = string_utils.split(service_keys, ",")
+	    local service_key_arr = string_utils.split(service_keys, ",")  -- 可以逗号分割多个服务名
 	    local info = error_code.SUCCESS 
 	    local data = {}
 	    for i in pairs(service_key_arr) do
@@ -52,6 +55,7 @@ _M.ruleset = function (conf)
 	          local optype = redis:hget(service_key, optype_key)
 	          local opdata = redis:hget(service_key, opdata_key)
 
+	          -- 展示数据
 	          data[s_key .. "." .. switch_key] = switch
 	          data[s_key .. "." .. optype_key] = optype
 	          data[s_key .. "." .. opdata_key] = opdata
@@ -60,8 +64,7 @@ _M.ruleset = function (conf)
 	      	  if switch== ngx.null or switch == "" or optype == ngx.null or optype == "" or opdata == ngx.null or opdata == "" then
 	      	  	info = error_code.POLICY_INVALID_ERROR
 	      	  	ngx.log(ngx.ERR, string.format("[API] [%d] %s[%s]", info[1], info[2], service_key))	
-	            -- ngx.log(ngx.ERR, "policy or policy item is null when set [" .. service_key .. "].")	  
-	      	    
+
 	      	    data[s_key .. ".result"] = "data_error"
 	      	  else
 	      	  	-- 将 redis 得到的数据，存入 ngx.shared.dict 中
@@ -98,15 +101,17 @@ _M.ruleset = function (conf)
 	return nil, ""
 end
 
--- get ruledata from ngx.shared.dict
+-- 获得 nginx 缓存 (ngx.shared.dict) 数据
 _M.ruleget = function (conf)
 	local service_name = conf.s_key
 	-- local rule_data_cache = ngx.shared["dict_rule_data"]
 	local result = {}
 
+	-- 如果指定 server_name， 则查询指定的 service 数据。否则，查询前 100 条.
 	if service_name and string.len(service_name) > 0 then
         local key_prefix   = config_base.prefixConf["policyPrefix"]
 
+        -- 构造 key
         local buffer_switch_key = table.concat({key_prefix, service_name, switch_key}, ":")
         local buffer_optype_key = table.concat({key_prefix, service_name, optype_key}, ":")
         local buffer_opdata_key = table.concat({key_prefix, service_name, opdata_key}, ":")
@@ -122,7 +127,7 @@ _M.ruleget = function (conf)
 
         result["data"] = data
 	else
-		result["service_name"] = "ALL"
+		result["service_name"] = service_name
         result["cache.prifix"] = "ALL limit 1000"
 
         local switch_keys = rule_data_cache:get_keys(100)  
@@ -137,11 +142,12 @@ _M.ruleget = function (conf)
 	return result
 end
 
--- delete ruledata from ngx.shared.dict
--- NOTE: make sure delete data from redis by manual
+-- 清空 nginx 缓存 (ngx.shared.dict) 内容
+-- 注意: 手动清空 redis 对应数据，否则会被后台线程同步过来
 _M.ruledelete = function (conf)
 	local service_keys = conf.s_key
 	local service_key_arr = string_utils.split(service_keys, ",")
+
 	for i in pairs(service_key_arr) do
         local s_key = service_key_arr[i]
         if s_key ~= nil and string.len(s_key) > 0 then
@@ -175,6 +181,7 @@ _M.switchupdate = function (conf)
 	return "0", "succeed update switch value"
 end
 
+-- 将 redis 数据同步到 nginx 缓存中去
 local sync_redis_to_dict = function ( )
 	ngx.log(ngx.ERR, "=====> init work for work 0")
 	local concat = table.concat
@@ -209,7 +216,6 @@ local sync_redis_to_dict = function ( )
 		        	else
 		        		keyDict[ups_sufix] = "true"
 		        	end
-		        	-- ngx.log(ngx.ERR, "[service]------> service: " .. ups_sufix)
 	          		-- 构造 redis key:   policyPrefix:servicename 格式
 	          		local service_key = table.concat({config_base.prefixConf["policyPrefix"],ups_sufix},":")
 
@@ -231,9 +237,7 @@ local sync_redis_to_dict = function ( )
 	          						if downIndex == nil then upsSize = upsSize + 1 end
 	          					end
 	          				end
-	          				-- ngx.log(ngx.ERR, "---> k: " .. k)
 	          			end
-	          			-- ngx.log(ngx.ERR, "---> k: " .. data_cache_ups_size_key .. ", size: " .. upsSize)
 	          			rule_data_cache:set(data_cache_ups_size_key, upsSize)
 	          		end
 
@@ -246,9 +250,6 @@ local sync_redis_to_dict = function ( )
 	      	  		if switch== ngx.null or switch == "" or optype == ngx.null or optype == "" or opdata == ngx.null or opdata == "" then
 	      	  			info = error_code.POLICY_INVALID_ERROR
 	      	  			ngx.log(ngx.ERR, string.format("[API] [%d] %s[%s]", info[1], info[2], service_key))	
-	            		-- ngx.log(ngx.ERR, "policy or policy item is null when set [" .. service_key .. "].")	  
-	      	    
-	      	    		-- data[s_key .. ".result"] = "data_error"
 	      	  		else
 	      	  			-- 将 redis 得到的数据，存入 ngx.shared.dict 中
 	          			rule_data_cache:set(service_key .. ":" .. switch_key, switch)
@@ -268,6 +269,8 @@ end
 _M.init_worker = function (self) 
 	local delay = 5  -- 5s
 	local schedule_worker_after_start
+
+	-- 定时轮询
 	schedule_worker_after_start = function (premature)
 	    if premature then
 	        return
@@ -280,9 +283,13 @@ _M.init_worker = function (self)
 	    end
 	end
 
+	-- 通过第一个 worker 同步数据
 	if ngx.worker.id() == 0 then
+
+		-- 启动时执行
 	 	ngx.timer.at(0, sync_redis_to_dict) 
 
+	 	-- 定时轮询
 	 	local ok, err = ngx.timer.at(delay, schedule_worker_after_start)
 		if not ok then
 		    ngx.log(ngx.ERR, "failed to create the timer: ", err)
