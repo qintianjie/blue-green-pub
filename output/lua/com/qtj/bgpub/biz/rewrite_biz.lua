@@ -81,7 +81,6 @@ else
 	local params = {}
 	params["uid"]         = s_uid
 	params["uname"]       = s_uname
-	params["rule_data"]   = opdata
 	params["ups_g1_size"] = ups_g1_size
 	params["ups_g2_size"] = ups_g2_size
 	params["server_size"] = cur_server_size
@@ -92,6 +91,9 @@ else
 	if string.lower(service_switch) == "test" then
 		local optype = gray_rule_cache:get(service_key .. ":" .. config_base.fields["optype"])
 		local opdata = gray_rule_cache:get(service_key .. ":" .. config_base.fields["opdata"])
+
+		params["rule_data"]   = opdata
+		
 		if not collection_utils.containKey(config_base.optypes, optype)  then
 			optype = "uidin"
 		end

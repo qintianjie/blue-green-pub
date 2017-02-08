@@ -1,0 +1,32 @@
+2017/02/09 15:16:04 [error] 56786#0: *2 [lua] bluegreen_biz.lua:186: =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:04 [error] 56786#0: *2 [lua] bluegreen_biz.lua:252: [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:04 [error] 56786#0: *2 [lua] bluegreen_biz.lua:252: [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:04 [error] 56786#0: *2 [lua] bluegreen_biz.lua:252: [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
+2017/02/09 15:16:09 [error] 56786#0: *5 [lua] bluegreen_biz.lua:186: sync_redis_to_dict(): =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:09 [error] 56786#0: *5 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:09 [error] 56786#0: *5 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:09 [error] 56786#0: *5 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
+2017/02/09 15:16:14 [error] 56786#0: *6 [lua] bluegreen_biz.lua:186: sync_redis_to_dict(): =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:14 [error] 56786#0: *6 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:14 [error] 56786#0: *6 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:14 [error] 56786#0: *6 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
+2017/02/09 15:16:19 [error] 56786#0: *10 [lua] bluegreen_biz.lua:186: sync_redis_to_dict(): =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:19 [error] 56786#0: *10 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:19 [error] 56786#0: *10 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:19 [error] 56786#0: *10 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
+2017/02/09 15:16:24 [error] 56786#0: *12 [lua] bluegreen_biz.lua:186: sync_redis_to_dict(): =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:24 [error] 56786#0: *12 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:24 [error] 56786#0: *12 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:24 [error] 56786#0: *12 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
+2017/02/09 15:16:29 [error] 56786#0: *13 [lua] bluegreen_biz.lua:186: sync_redis_to_dict(): =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:29 [error] 56786#0: *13 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:29 [error] 56786#0: *13 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:29 [error] 56786#0: *13 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
+2017/02/09 15:16:34 [error] 56786#0: *14 [lua] bluegreen_biz.lua:186: sync_redis_to_dict(): =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:34 [error] 56786#0: *14 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:34 [error] 56786#0: *14 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:34 [error] 56786#0: *14 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
+2017/02/09 15:16:39 [error] 56786#0: *15 [lua] bluegreen_biz.lua:186: sync_redis_to_dict(): =====> init work for work 0, context: ngx.timer
+2017/02/09 15:16:39 [error] 56786#0: *15 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend], context: ngx.timer
+2017/02/09 15:16:39 [error] 56786#0: *15 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend2], context: ngx.timer
+2017/02/09 15:16:39 [error] 56786#0: *15 [lua] bluegreen_biz.lua:252: sync_redis_to_dict(): [API] [50201] policies invalid for: [biztech:gray:backend3], context: ngx.timer
