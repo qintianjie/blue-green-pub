@@ -1,4 +1,4 @@
-# 最新手册参考： https://github.com/qintianjie/blue-green-pub/wiki/%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C
+# 最新手册参考： https://github.com/qintianjie/blue-green-pub/wiki/蓝绿发布使用手册
 
 # run sample:
 ```
