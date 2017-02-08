@@ -116,6 +116,9 @@ _M.ruleget = function (conf)
         local buffer_optype_key = table.concat({key_prefix, service_name, optype_key}, ":")
         local buffer_opdata_key = table.concat({key_prefix, service_name, opdata_key}, ":")
 
+        local buffer_g1_size_key = table.concat({key_prefix, service_name, "_g1"}, ":")
+        local buffer_g2_size_key = table.concat({key_prefix, service_name, "_g2"}, ":")
+
         
         result["service_name"] = service_name
         result["cache.prifix"] = key_prefix .. ":" .. service_name
@@ -124,6 +127,8 @@ _M.ruleget = function (conf)
         data[switch_key] = rule_data_cache:get(buffer_switch_key)
         data[optype_key] = rule_data_cache:get(buffer_optype_key)
         data[opdata_key] = rule_data_cache:get(buffer_opdata_key)
+        data["g1_size"]  = rule_data_cache:get(buffer_g1_size_key)
+        data["g2_size"]  = rule_data_cache:get(buffer_g2_size_key)
 
         result["data"] = data
 	else
