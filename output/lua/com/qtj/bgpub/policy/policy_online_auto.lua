@@ -17,6 +17,7 @@ _M.process = function (params)
 	local gray_uids   = params["rule_data"]
 	local ups_g1_size = params["ups_g1_size"]
 	local ups_g2_size = params["ups_g2_size"]
+	local server_size =	params["server_size"]
 	local ups_g1_name =	params["ups_g1_name"]
 	local ups_g2_name =	params["ups_g2_name"]
 
@@ -28,7 +29,7 @@ _M.process = function (params)
 		ups = ups_g1_name
 	else
 		-- 动态计算
-		local server_size = ups_g1_size + ups_g2_size
+		-- local server_size = ups_g1_size + ups_g2_size
 		local userid_num = tonumber(req_uid)
 		if userid_num ~= nil and userid_num > 0 and userid_num % server_size < ups_g1_size then
 			ups = ups_g1_name

@@ -31,7 +31,9 @@ _M.fields = {
     -- ['opdata']           = 'opdata'
     ['switch']           = 'graySwitch',
     ['optype']           = 'grayType',
-    ['opdata']           = 'grayData'
+    ['opdata']           = 'grayData',
+
+    ['server_size']      = 'server_size'
 }
 
 _M.optypes = {

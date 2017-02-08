@@ -31,10 +31,14 @@ local service_key = table.concat({config_base.prefixConf["policyPrefix"],s_key},
 local gray_rule_cache = ngx.shared["dict_rule_data"]
 local service_switch = gray_rule_cache:get(service_key .. ":" .. config_base.fields["switch"])
 
+-- all server size key
+local server_size_key = service_key .. ":" .. config_base.fields["server_size"]
+local server_size = 0
+
 -- 如果没有 switch，则访问 名为 service_name 的 upstream
 if service_switch == nil or service_switch == false then
 	ngx.var._UPS = s_key
-else
+else	
 	-- 取 dict 中 upstream 每组 server 数量
 	local g1_key = service_key .. ":_g1"
 	local g2_key = service_key .. ":_g2"
@@ -42,6 +46,11 @@ else
 	local ups_g2_size = gray_rule_cache:get(g2_key)
 	if ups_g1_size == nil then ups_g1_size = 0 end
 	if ups_g2_size == nil then ups_g2_size = 0 end
+
+	if service_switch ~= "online_auto" then
+		server_size = ups_g1_size + ups_g2_size
+		gray_rule_cache:set(service_switch, server_size)
+	end
 
 	-- 如果两组 upstream 里的 server 均为0，则访问名为 service_name 的 upstream
 	if ups_g1_size == 0 and ups_g2_size == 0 then
@@ -62,6 +71,12 @@ else
 		return
 	end
 
+	local cur_server_size = gray_rule_cache:get(service_switch)
+	if cur_server_size == nil or cur_server_size < 1 then
+		cur_server_size = ups_g1_size + ups_g2_size
+		gray_rule_cache:set(service_switch, server_size)
+	end
+
 	-- 构造请求参数，供后续规则处理用
 	local params = {}
 	params["uid"]         = s_uid
@@ -69,6 +84,7 @@ else
 	params["rule_data"]   = opdata
 	params["ups_g1_size"] = ups_g1_size
 	params["ups_g2_size"] = ups_g2_size
+	params["server_size"] = cur_server_size
 	params["ups_g1_name"] = ups_g1_name
 	params["ups_g2_name"] = ups_g2_name
 
