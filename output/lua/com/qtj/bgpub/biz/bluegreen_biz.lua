@@ -49,11 +49,13 @@ _M.ruleset = function (conf)
 	          local real_key = string_utils.trim(s_key)
 	          -- 构造 redis key:   policyPrefix:servicename 格式
 	          local service_key = table.concat({config_base.prefixConf["policyPrefix"],real_key},":")
+	          local data_cache_ups_sum_size_key = table.concat({service_key, config_base.fields["server_size"]}, ":")
 
 	          -- 每个 key 都是一个 map， 对应规则数据有:  switch 路由, optype 操作类型, opdata: 操作数据
 	          local switch = redis:hget(service_key, switch_key)
 	          local optype = redis:hget(service_key, optype_key)
 	          local opdata = redis:hget(service_key, opdata_key)
+	          local ups_server_sum_size = redis:hget(data_cache_ups_sum_size_key, opdata_key)
 
 	          -- 展示数据
 	          data[s_key .. "." .. switch_key] = switch
@@ -71,6 +73,11 @@ _M.ruleset = function (conf)
 	          	rule_data_cache:set(service_key .. ":" .. switch_key, switch)
 	          	rule_data_cache:set(service_key .. ":" .. optype_key, optype)
 	          	rule_data_cache:set(service_key .. ":" .. opdata_key, opdata)
+
+	          	if switch ~= "auto" then
+	          		rule_data_cache:set(data_cache_ups_sum_size_key, ups_server_sum_size)
+	          	end
+
 	          	data[s_key .. ".result"] = "succeed"
 	      	  end
 	        end
@@ -116,19 +123,23 @@ _M.ruleget = function (conf)
         local buffer_optype_key = table.concat({key_prefix, service_name, optype_key}, ":")
         local buffer_opdata_key = table.concat({key_prefix, service_name, opdata_key}, ":")
 
-        local buffer_g1_size_key = table.concat({key_prefix, service_name, "_g1"}, ":")
-        local buffer_g2_size_key = table.concat({key_prefix, service_name, "_g2"}, ":")
+        local buffer_g1_size_key  = table.concat({key_prefix, service_name, "_g1"}, ":")
+        local buffer_g2_size_key  = table.concat({key_prefix, service_name, "_g2"}, ":")
+        local buffer_sum_size_key = table.concat({key_prefix, service_name, config_base.fields["server_size"]}, ":")
 
         
         result["service_name"] = service_name
         result["cache.prifix"] = key_prefix .. ":" .. service_name
 
         local data = {}
-        data[switch_key] = rule_data_cache:get(buffer_switch_key)
-        data[optype_key] = rule_data_cache:get(buffer_optype_key)
-        data[opdata_key] = rule_data_cache:get(buffer_opdata_key)
-        data["g1_size"]  = rule_data_cache:get(buffer_g1_size_key)
-        data["g2_size"]  = rule_data_cache:get(buffer_g2_size_key)
+        data[switch_key]   = rule_data_cache:get(buffer_switch_key)
+        data[optype_key]   = rule_data_cache:get(buffer_optype_key)
+        data[opdata_key]   = rule_data_cache:get(buffer_opdata_key)
+        data["g1_size"]    = rule_data_cache:get(buffer_g1_size_key)
+        data["g2_size"]    = rule_data_cache:get(buffer_g2_size_key)
+
+        data["g_size_sum"] = rule_data_cache:get(buffer_sum_size_key)
+        ngx.log(ngx.ERR, "==========================> get: " .. buffer_sum_size_key .. ", size: " .. rule_data_cache:get(buffer_sum_size_key))
 
         result["data"] = data
 	else
@@ -229,6 +240,7 @@ local sync_redis_to_dict = function ( )
 	          		local optype = redis:hget(service_key, optype_key)
 	          		local opdata = redis:hget(service_key, opdata_key)
 
+	          		local ups_size_arr = {}
 	          		for _, k in ipairs(ups_group) do
 	          			local data_cache_ups_size_key = service_key .. ":_" .. k
 	          			local group_content = redis:hget(service_key, "_" .. k)   -- _g1, _g2
@@ -244,6 +256,28 @@ local sync_redis_to_dict = function ( )
 	          				end
 	          			end
 	          			rule_data_cache:set(data_cache_ups_size_key, upsSize)
+	          			ups_size_arr[data_cache_ups_size_key] = upsSize
+	          			-- if switch_key ~= "auto" then
+	          			-- 	rule_data_cache:set(data_cache_ups_size_key, upsSize)
+	          			-- end
+	          		end
+	          		local data_cache_ups_sum_size_key = table.concat({service_key, config_base.fields["server_size"]}, ":")
+	          		if switch ~= "auto" then
+	          			local size_sum = 0
+	          			for k, v in pairs(ups_size_arr) do
+	          				size_sum = size_sum + v
+	          			end
+	          			-- ngx.log(ngx.ERR, "==========================> set: " .. switch .. ", cache_key: " .. data_cache_ups_sum_size_key .. ", size: " .. size_sum .. ", json: " .. cjson.encode(ups_size_arr))
+	          			rule_data_cache:set(data_cache_ups_sum_size_key, size_sum)
+	          		else
+	          			local size_sum = rule_data_cache:get(data_cache_ups_sum_size_key)
+	          			if size_sum == nil or size_sum < 1 then
+	          				size_sum = 0
+	          				for k, v in pairs(ups_size_arr) do
+		          				size_sum = size_sum + v
+		          			end
+		          			rule_data_cache:set(data_cache_ups_sum_size_key, size_sum)
+	          			end
 	          		end
 
 
